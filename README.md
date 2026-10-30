@@ -2,7 +2,25 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.3**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.4**, common policy, compatibility code and integration checks.
+
+## Enchanter's Crossbow fusion
+
+Normal anvil: **receiving crossbow on the left + Enchanter's Crossbow on the right**, one XP level. `crossbow_fusion.enabled` defaults to true. The result keeps the original item, appearance, loading, ammunition, charging enchantments, multi-shot, piercing, firing, rockets and durability behavior. Scribing uses the native Ars crossbow's rules and implicit Projectile form.
+
+The receiving crossbow loads ammunition normally. Magic is paid **when it fires**, individually for each accepted projectile, using the ammunition already loaded in the crossbow. Swapping inventory ammo after loading cannot change that shot's Ars augment. Its own physical multi-shot remains intact if mana only funds some spell payloads. Native Ars augment arrows work through the same payload engine as bow fusion; rockets remain actual rockets. No ammo-conjuring or donor mana-discount property is copied.
+
+With optional Conflux, preparation and cooldown checks apply to **firing**, including already-loaded crossbows, rather than adding a second preparation to loading. Both hands are supported. A queued firing use keeps the loaded ammunition until release; a magic cooldown rejection permits the ordinary physical shot without extra magic.
+
+Automatic crossbow compatibility defaults to true and permits CrossbowItem receivers even when the source mod supplies no common tags. `ars_fusion:crossbow_fusion_blacklist` always takes precedence. Set `crossbow_fusion.automatic_compatibility = false` to require `ars_fusion:crossbow_fusion_targets` (vanilla/common-tagged crossbows by default). Generic observation covers the native item-use firing path and its synchronous native projectiles. NPC/custom code firing outside that path, asynchronous projectiles, custom collision APIs or state omitted from native serialization may need explicit adapters, as with bow fusion.
+
+## Enchanter's Shield fusion
+
+Normal anvil: **receiving shield on the left + Enchanter's Shield on the right**, one XP level. `shield_fusion.enabled` defaults to true. The result keeps the original shield's appearance, decorations, enchantments, durability, blocking and other native behavior.
+
+The native Ars shield does **not** store a spell. Shield fusion transfers its utility instead: native Mana Regeneration II and Spell Damage II after blocking, plus the native mana-funded repair behavior. Ars owns the buff durations, repair interval/rate and mana fee, including its configuration and repairing-thread interactions. There is no added spell editor or caster container on the shield, and no donor physical properties are copied.
+
+Automatic shield compatibility defaults to true and recognizes the loader's actual shield-block action, including items that do not inherit ShieldItem. `ars_fusion:shield_fusion_blacklist` always takes precedence. Set `shield_fusion.automatic_compatibility = false` to additionally require `ars_fusion:shield_fusion_targets` (vanilla/common-tagged shields by default). Custom blocking code must emit the native shield-block event to gain the native buffs. Custom names take precedence, and disabling new fusion preserves existing results.
 
 ## Enchanter's Bow fusion
 
@@ -67,6 +85,14 @@ The default attribute blacklist is armor and armor toughness. **Vanilla netherit
 `ars_fusion-server.toml` (NeoForge: `config/`; Forge: world's `serverconfig/`):
 
 ```toml
+[crossbow_fusion]
+enabled = true
+automatic_compatibility = true
+
+[shield_fusion]
+enabled = true
+automatic_compatibility = true
+
 [bow_fusion]
 enabled = true
 

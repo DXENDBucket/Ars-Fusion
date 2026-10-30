@@ -14,7 +14,10 @@
     "BowProjectileDataMixin",
     "BowProjectileSaveMixin",
     "BowAmmoMixin",
-    "BowArrowAccessor"
+    "BowArrowAccessor",
+    "FusedCrossbowUseMixin",
+    "FusedShieldBlockMixin",
+    "FusedShieldRepairMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FusedSwordCasterMixin {
     @Inject(method="hasCaster",at=@At("HEAD"),cancellable=true)
     private static void arsFusion$boundCaster(ItemStack stack,CallbackInfoReturnable<Boolean> cir) {
-        if(SwordFusion.has(stack)||dev.arsfusion.bow.BowFusion.has(stack))cir.setReturnValue(true);
+        if(dev.arsfusion.casting.FusedCasting.has(stack))cir.setReturnValue(true);
     }
 }

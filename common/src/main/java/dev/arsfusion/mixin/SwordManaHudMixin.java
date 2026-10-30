@@ -11,6 +11,6 @@ public abstract class SwordManaHudMixin {
     private static void arsFusion$heldTool(CallbackInfoReturnable<Boolean> cir) {
         var mc=Minecraft.getInstance();
         if(!cir.getReturnValue()&&!mc.options.hideGui&&mc.player!=null
-                &&(SwordFusion.has(mc.player.getMainHandItem())||SwordFusion.has(mc.player.getOffhandItem())||dev.arsfusion.bow.BowFusion.has(mc.player.getMainHandItem())||dev.arsfusion.bow.BowFusion.has(mc.player.getOffhandItem())))cir.setReturnValue(true);
+                &&(dev.arsfusion.casting.FusedCasting.bound(mc.player.getMainHandItem())||dev.arsfusion.casting.FusedCasting.bound(mc.player.getOffhandItem())))cir.setReturnValue(true);
     }
 }

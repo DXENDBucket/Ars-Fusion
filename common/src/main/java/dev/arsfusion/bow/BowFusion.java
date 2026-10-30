@@ -22,7 +22,7 @@ public final class BowFusion {
     public static boolean canFuse(ItemStack left,ItemStack right) {
         return FusionConfig.bowFusionEnabled()&&left.getCount()==1&&left.getMaxStackSize()==1
                 &&left.getItem() instanceof ProjectileWeaponItem&&!(left.getItem() instanceof CrossbowItem)
-                &&left.is(TARGETS)&&!left.is(BLACKLIST)&&!SwordPlatform.existingCaster(left)
+                &&left.is(TARGETS)&&!left.is(BLACKLIST)&&!dev.arsfusion.casting.FusedCasting.bound(left)&&!SwordPlatform.existingCaster(left)
                 &&right.getItem() instanceof SpellBow;
     }
     public static ItemStack fuse(ItemStack left,ItemStack right) {

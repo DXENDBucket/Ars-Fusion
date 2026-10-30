@@ -28,10 +28,13 @@ public final class BowPlatform {
     public static boolean has(ItemStack stack) {return stack.getOrDefault(TYPE.get(),false);}
     public static void mark(ItemStack stack) {stack.set(TYPE.get(),true);}
     public static ItemStack prepare(ItemStack stack,LivingEntity actor) {
+        return prepare(stack,actor,actor.getUsedItemHand(),actor instanceof Player player?player.getProjectile(stack):ItemStack.EMPTY);
+    }
+    public static ItemStack prepare(ItemStack stack,LivingEntity actor,net.minecraft.world.InteractionHand hand,ItemStack ammo) {
         var tool=stack.copy();var caster=SpellCasterRegistry.from(tool);var spell=caster.getSpell();
-        spell=caster.modifySpellBeforeCasting((net.minecraft.server.level.ServerLevel)actor.level(),actor,actor.getUsedItemHand(),spell);
+        spell=caster.modifySpellBeforeCasting((net.minecraft.server.level.ServerLevel)actor.level(),actor,hand,spell);
         var mutable=spell.mutable();
-        if(actor instanceof Player player&&player.getProjectile(stack).getItem() instanceof SpellArrow arrow)arrow.modifySpell(mutable);
+        if(ammo.getItem() instanceof SpellArrow arrow)arrow.modifySpell(mutable);
         caster.setSpell(mutable.immutable()).saveToStack(tool);return tool;
     }
     public static SpellResolver resolver(ItemStack tool,LivingEntity actor) {
@@ -40,6 +43,9 @@ public final class BowPlatform {
     }
     public static void active(ItemStack tool,LivingEntity actor,Runnable magic,Runnable physical) {
         if(conflux())ConfluxBowCasting.active(tool,actor,magic,physical);else magic.run();
+    }
+    public static <T> T activeUse(ItemStack tool,LivingEntity actor,net.minecraft.world.InteractionHand hand,java.util.function.Supplier<T> magic,java.util.function.Supplier<T> physical,T queued) {
+        return conflux()?ConfluxBowCasting.activeUse(tool,actor,hand,magic,physical,queued):magic.get();
     }
     public static boolean admit(SpellResolver resolver) {return !conflux()||ConfluxBowCasting.admit(resolver);}
     public static void dispatched(SpellResolver resolver) {if(conflux())ConfluxBowCasting.dispatched(resolver);}
@@ -55,11 +61,11 @@ public final class BowPlatform {
         if(!tag.contains(PAYLOAD_KEY,Tag.TAG_COMPOUND))return;
         var data=tag.getCompound(PAYLOAD_KEY);if(!data.hasUUID("Caster"))return;
         var tool=ItemStack.parseOptional(world.registryAccess(),data.getCompound("Tool"));
-        if(BowFusion.has(tool)&&SpellCasterRegistry.from(tool)!=null)carrier.arsFusion$payload(new BowPayload(data.getUUID("Caster"),tool));
+        if((BowFusion.has(tool)||dev.arsfusion.crossbow.CrossbowFusion.has(tool))&&SpellCasterRegistry.from(tool)!=null)carrier.arsFusion$payload(new BowPayload(data.getUUID("Caster"),tool));
     }
     public static void register(net.neoforged.bus.api.IEventBus bus) {
         TYPES.register(bus);
-        NeoForge.EVENT_BUS.addListener((EntityJoinLevelEvent e)->{if(!e.getLevel().isClientSide)BowCasting.spawned(e.getEntity());});
+        NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.NORMAL,true,(EntityJoinLevelEvent e)->{if(!e.getLevel().isClientSide)BowCasting.spawned(e.getEntity());});
         NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,(ProjectileImpactEvent e)->BowImpacts.impact(e.getProjectile(),e.getRayTraceResult(),e::isCanceled));
         NeoForge.EVENT_BUS.addListener((LivingDamageEvent.Post e)->BowImpacts.damaged(e.getSource().getDirectEntity(),e.getEntity(),e.getNewDamage()));
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post e)->BowImpacts.tick());

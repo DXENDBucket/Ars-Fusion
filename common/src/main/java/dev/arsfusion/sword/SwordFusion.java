@@ -20,7 +20,7 @@ public final class SwordFusion {
     public static boolean has(ItemStack stack) {return !stack.isEmpty()&&SwordPlatform.has(stack);}
     public static boolean canFuse(ItemStack left,ItemStack right) {
         return FusionConfig.swordFusionEnabled()&&left.getCount()==1&&left.getMaxStackSize()==1
-                &&left.is(TARGETS)&&!left.is(BLACKLIST)&&!has(left)&&!SwordPlatform.existingCaster(left)
+                &&left.is(TARGETS)&&!left.is(BLACKLIST)&&!has(left)&&!dev.arsfusion.casting.FusedCasting.bound(left)&&!SwordPlatform.existingCaster(left)
                 &&right.getItem() instanceof EnchantersSword&&!has(right);
     }
     public static ItemStack fuse(ItemStack left,ItemStack right) {

@@ -21,7 +21,9 @@ public final class SwordPlatform {
         to.setColor(from.getColor());to.setSound(from.getCurrentSound());to.setSpellHidden(from.isSpellHidden());to.setHiddenRecipe(from.getHiddenRecipe());
     }
     public static void tooltip(ItemTooltipEvent event) {
-        if(dev.arsfusion.bow.BowFusion.has(event.getItemStack()))dev.arsfusion.bow.BowFusion.bow().getInformation(event.getItemStack(),event.getEntity()==null?null:event.getEntity().level(),event.getToolTip(),event.getFlags());
-        if(SwordFusion.has(event.getItemStack()))NativeSwordCasting.sword().getInformation(event.getItemStack(),event.getEntity()==null?null:event.getEntity().level(),event.getToolTip(),event.getFlags());
+        var stack=event.getItemStack();
+        if(dev.arsfusion.casting.FusedCasting.has(stack))((com.hollingsworth.arsnouveau.api.item.ICasterTool)dev.arsfusion.casting.FusedCasting.nativeItem(stack))
+                .getInformation(stack,event.getEntity()==null?null:event.getEntity().level(),event.getToolTip(),event.getFlags());
+        if(dev.arsfusion.shield.ShieldFusion.has(stack))event.getToolTip().add(net.minecraft.network.chat.Component.translatable("tooltip.ars_fusion.shield_utility"));
     }
 }

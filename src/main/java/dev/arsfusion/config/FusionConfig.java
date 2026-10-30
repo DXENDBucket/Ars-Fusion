@@ -10,6 +10,10 @@ import java.util.HashSet;
 public final class FusionConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue SWORD_FUSION_ENABLED;
+    public static final ModConfigSpec.BooleanValue CROSSBOW_FUSION_ENABLED;
+    public static final ModConfigSpec.BooleanValue AUTOMATIC_CROSSBOW_COMPATIBILITY;
+    public static final ModConfigSpec.BooleanValue AUTOMATIC_SHIELD_COMPATIBILITY;
+    public static final ModConfigSpec.BooleanValue SHIELD_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue BOW_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue ARMOR_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue AUTOMATIC_ARMOR_COMPATIBILITY;
@@ -22,6 +26,13 @@ public final class FusionConfig {
 
     static {
         var builder = new ModConfigSpec.Builder();
+        builder.push("crossbow_fusion");
+        CROSSBOW_FUSION_ENABLED=builder.comment("Allow anvil fusion: receiving crossbow + Enchanter's Crossbow. Preserves native loading/firing; attaches spells at firing time using loaded ammo.").define("enabled",true);
+        AUTOMATIC_CROSSBOW_COMPATIBILITY=builder.comment("Allow any CrossbowItem receiver, including untagged modded crossbows. Blacklist always wins. Disable to require crossbow_fusion_targets.").define("automatic_compatibility",true);
+        builder.pop().push("shield_fusion");
+        SHIELD_FUSION_ENABLED=builder.comment("Allow anvil fusion: receiving shield + Enchanter's Shield. Adds native block buffs and mana-funded repair, not a spell container.").define("enabled",true);
+        AUTOMATIC_SHIELD_COMPATIBILITY=builder.comment("Allow any receiver with the native shield-block action, including shields that do not extend ShieldItem. Blacklist always wins. Disable to require shield_fusion_targets.").define("automatic_compatibility",true);
+        builder.pop();
         builder.push("bow_fusion");
         BOW_FUSION_ENABLED=builder.comment("Allow anvil fusion: receiving bow + Enchanter's Bow. Preserves native firing and projectile types; attaches Ars spells to successful hits.",
                 "Supports native Ars augment arrows. Existing bindings survive disabling crafting.").define("enabled",true);
@@ -66,6 +77,10 @@ public final class FusionConfig {
     private static boolean validAttribute(Object value) {
         return value instanceof String id && ResourceLocation.tryParse(id) != null;
     }
+    public static boolean automaticCrossbowCompatibility() {return read(AUTOMATIC_CROSSBOW_COMPATIBILITY);}
+    public static boolean automaticShieldCompatibility() {return read(AUTOMATIC_SHIELD_COMPATIBILITY);}
+    public static boolean crossbowFusionEnabled() {return read(CROSSBOW_FUSION_ENABLED);}
+    public static boolean shieldFusionEnabled() {return read(SHIELD_FUSION_ENABLED);}
     public static boolean bowFusionEnabled() {return read(BOW_FUSION_ENABLED);}
     public static boolean swordFusionEnabled() {return read(SWORD_FUSION_ENABLED);}
     public static boolean armorFusionEnabled() { return read(ARMOR_FUSION_ENABLED); }

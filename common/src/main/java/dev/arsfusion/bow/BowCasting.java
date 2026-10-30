@@ -18,7 +18,7 @@ public final class BowCasting {
     private static final ThreadLocal<Launch> LAUNCH=new ThreadLocal<>();
     private BowCasting() {}
     public static Predicate<ItemStack> ammo(Predicate<ItemStack> original,ItemStack weapon) {
-        return BowFusion.has(weapon)?original.or(stack->stack.getItem() instanceof SpellArrow):original;
+        return BowFusion.has(weapon)||dev.arsfusion.crossbow.CrossbowFusion.has(weapon)?original.or(stack->stack.getItem() instanceof SpellArrow):original;
     }
     public static void release(Item item,ItemStack stack,net.minecraft.world.level.Level world,LivingEntity actor,int remaining) {
         Runnable physical=()->item.releaseUsing(stack,world,actor,remaining);
@@ -26,15 +26,24 @@ public final class BowCasting {
         BowPlatform.active(stack.copy(),actor,()->capture(BowPlatform.prepare(stack,actor),actor,physical),physical);
     }
     private static void capture(ItemStack tool,LivingEntity actor,Runnable physical) {
+        capture(actor,i->tool,()->{physical.run();return null;});
+    }
+    /** One native firing transaction, shared by bows and crossbows; the supplier retains its native return. */
+    public static <T> T capture(LivingEntity actor,java.util.function.IntFunction<ItemStack> tools,java.util.function.Supplier<T> physical) {
         var previous=LAUNCH.get();var scope=new Launch(new ArrayList<>());LAUNCH.set(scope);
-        try {physical.run();} finally {if(previous==null)LAUNCH.remove();else LAUNCH.set(previous);}
-        if(!(actor.level() instanceof ServerLevel world))return;
+        T result;
+        try {result=physical.get();} finally {if(previous==null)LAUNCH.remove();else LAUNCH.set(previous);}
+        if(!(actor.level() instanceof ServerLevel world))return result;
+        int index=0;
         for(var projectile:scope.projectiles) {
-            if(projectile.getOwner()!=actor||world.getEntity(projectile.getUUID())!=projectile
-                    ||projectile instanceof com.hollingsworth.arsnouveau.common.entity.EntitySpellArrow)continue;
+            if(projectile.getOwner()!=actor)continue;
+            var tool=tools.apply(index++);
+            if(world.getEntity(projectile.getUUID())!=projectile||projectile instanceof com.hollingsworth.arsnouveau.common.entity.EntitySpellArrow)continue;
+            int nativePierce=projectile instanceof AbstractArrow arrow?Byte.toUnsignedInt(arrow.getPierceLevel()):0;
             var resolver=attach(projectile,actor,tool);
-            if(resolver!=null&&projectile instanceof AbstractArrow arrow)split(arrow,actor,tool,resolver);
+            if(resolver!=null&&projectile instanceof AbstractArrow arrow)split(arrow,actor,tool,resolver,nativePierce);
         }
+        return result;
     }
     /** Only synchronous native launch spawns are observed, never unrelated arrows owned by this player. */
     public static void spawned(Entity entity) {
@@ -55,15 +64,14 @@ public final class BowCasting {
         BowPlatform.dispatched(resolver);
         return resolver;
     }
-    private static void split(AbstractArrow original,LivingEntity actor,ItemStack tool,SpellResolver resolver) {
+    private static void split(AbstractArrow original,LivingEntity actor,ItemStack tool,SpellResolver resolver,int nativePierce) {
         int count=resolver.spell.getBuffsAtIndex(0,actor,AugmentSplit.INSTANCE);
         if(count<=0)return;
         var world=(ServerLevel)original.level();var extras=new ArrayList<AbstractArrow>();
         // Serialize the native type, keeping tracking/ammo/custom NBT. Never substitute EntitySpellArrow.
         var data=original.saveWithoutId(new CompoundTag());data.remove("UUID");data.remove(BowPlatform.PAYLOAD_KEY);
         // attach() adds Pierce independently, so clone the pre-augmentation level.
-        int addedPierce=resolver.spell.getBuffsAtIndex(0,actor,AugmentPierce.INSTANCE);
-        data.putByte("PierceLevel",(byte)Math.max(0,Byte.toUnsignedInt(original.getPierceLevel())-addedPierce));
+        data.putByte("PierceLevel",(byte)nativePierce);
         for(int i=0;i<count;i++) {
             var entity=original.getType().create(world);
             if(!(entity instanceof AbstractArrow extra))break;

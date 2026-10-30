@@ -18,6 +18,11 @@ public final class ConfluxBowCasting {
         if(!admitted)physical.run();
     }
     public static boolean admit(SpellResolver resolver) {return ActiveCasts.allowDispatch(resolver);}
+    public static <T> T activeUse(ItemStack tool,LivingEntity actor,net.minecraft.world.InteractionHand hand,
+                                  java.util.function.Supplier<T> magic,java.util.function.Supplier<T> physical,T queued) {
+        T result=ActiveCasts.perform(BowPlatform.resolver(tool,actor).spell,actor,hand,ActiveCastSource.CASTER_TOOL,magic,null,queued);
+        return result==null?physical.get():result;
+    }
     public static void dispatched(SpellResolver resolver) {ActiveCasts.dispatched(resolver,true);}
     public static void resolve(SpellResolver resolver,net.minecraft.server.level.ServerLevel world,
                                net.minecraft.world.phys.HitResult hit,net.minecraft.world.phys.Vec3 direction) {

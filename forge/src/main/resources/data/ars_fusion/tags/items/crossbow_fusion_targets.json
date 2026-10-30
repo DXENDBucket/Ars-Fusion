@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:crossbow",
+    {
+      "id": "#c:tools/crossbow",
+      "required": false
+    },
+    {
+      "id": "#c:tools/crossbows",
+      "required": false
+    },
+    {
+      "id": "#forge:tools/crossbows",
+      "required": false
+    }
+  ]
+}

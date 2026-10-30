@@ -25,6 +25,7 @@ neoForge {
 }
 dependencies {
     if (providers.gradleProperty('withCataclysm').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: '../Cataclysm-Nouveau/libs', include: ["L_Ender's Cataclysm*.jar", 'lionfishapi*.jar'])
+    if (providers.gradleProperty('withEquipmentFixtures').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: 'libs/equipment', include: '*.jar')
     compileOnly fileTree(dir: 'libs', include: '*.jar')
     compileOnly fileTree(dir: 'libs/coexist', include: '*conflux*.jar')
     runtimeOnly fileTree(dir: 'libs', include: '*.jar', excludes: providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? ['iron.jar','irons-lib.jar','player-animation.jar'] : [])

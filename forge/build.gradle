@@ -63,6 +63,11 @@ tasks.register('verifyRelease') {
             def target = mappings.mappings?.get('dev/arsfusion/mixin/FusedArmorNameMixin')?.get('getHoverName')
             if (target == null || !target.contains('m_41786_')) throw new GradleException('ItemStack.getHoverName is not mapped to the production target')
             [
+                'dev/arsfusion/mixin/FusedCrossbowUseMixin': [
+                    'use':'m_41682_',
+                    'Lnet/minecraft/world/item/Item;use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;':'m_7203_'],
+                'dev/arsfusion/mixin/FusedShieldRepairMixin': ['inventoryTick':'m_41666_'],
+                'dev/arsfusion/mixin/FusedShieldBlockMixin': ['Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;':'m_41720_'],
                 'dev/arsfusion/mixin/FusedBowReleaseMixin': [
                     'releaseUsing':'m_41674_',
                     'Lnet/minecraft/world/item/Item;releaseUsing(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)V':'m_5551_'],

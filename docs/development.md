@@ -105,3 +105,23 @@ Targeted bow + sword regression commands (PowerShell requires quotes around the 
 # Forge, Java 17, in forge/; optional fixture cases skip without their mods
 ./gradlew.bat runGameTestServer jar sourcesJar verifyRelease -PwithoutIron=true '-PgameTestNamespaces=ars_fusion_bow,ars_fusion_sword' --offline --console=plain --no-daemon
 ```
+
+
+## Crossbow and shield fusion (0.1.4)
+
+`casting/FusedCasting` is the shared stack-specific recognition used by native scribing, caster registration previews, spell tooltips, names and the mana HUD. Shield binding belongs to `bound`, not `has`: shields have native utility but no caster. All creation paths reject another existing equipment binding. Components/NBT for the new markers and loaded-ammunition inspection live in EquipmentPlatform.
+
+`crossbow/CrossbowCasting` wraps the real ItemStack use -> Item.use call only for loaded fused crossbows. Loading/release remains native, with no magic charge at loading time. At firing, it snapshots the native loaded ammunition and caster, prepares each loaded arrow's native augment through BowPlatform, and observes synchronous original spawns through the existing generic BowCasting.capture supplier scope. Return values, exceptions and nested scopes retain their original control flow; every scope is restored in finally. Canceled spawn events remain in the observation sequence so later mixed loaded ammo does not shift indices, but attachment/payment still requires accepted server entity membership and matching ownership. The native item owns ammunition clearing, physical enchantments, special projectile classes and wear. Native payload persistence also accepts crossbow markers. Split preserves each original arrow's pre-augmentation Pierce level even if the added value saturates.
+
+Conflux integration uses the existing public active-use API with the actual firing hand. It queues the whole native use, acknowledges only real accepted magic payloads, and prevents preloading extra crossbows from bypassing the magic cooldown. A denial falls back to an ordinary physical shot, consistently with fused bows. Direct NPC performShooting calls or asynchronous custom launch paths are not implicitly intercepted; no global scanning or projectile-owner heuristic is installed.
+
+`shield/ShieldFusion` adds a boolean utility marker only. FusedShieldBlockMixin redirects the item-identity read strictly inside Ars EventHandler.shieldEvent, so the existing Ars subscriber performs the exact native buff logic and other mods' shield-block event processing stays in place. It never changes the item returned to the physical blocking system. FusedShieldRepairMixin runs after the original receiving ItemStack inventory tick and invokes the public native RepairingPerk.attemptRepair, preserving original item ticks and Ars' own interval, cost, config and perk accounting. Neither native implementation nor native art is copied.
+
+Targeted cases are in `ars_fusion_equipment` (add it to gameTestNamespaces). The dedicated real-shield-block fixture advances the headless ServerPlayer's spawn-immunity and item-use ticks through native tick/doTick methods, because it has no real packet listener tick; gameplay invulnerability rules are not modified.
+
+
+### Native mod equipment coverage
+
+Automatic crossbow compatibility defaults to CrossbowItem inheritance; automatic shield compatibility uses the native shield-block action rather than ShieldItem inheritance. Both have a creation-policy toggle to require the target tags instead, and blacklists always win. This matters for untagged Goety crossbows and Cataclysm's Bulwark of the Flame, which extends Item directly. Do not require another mod to supply our preferred common tags just to use the default automatic path.
+
+The optional `-PwithEquipmentFixtures=true` NeoForge fixture loads native Goety 3.2.2 and Patchouli from ignored libs/equipment (copied locally from the actual pack/native dependencies, never distributed). Iron is already in the normal coexistence fixture; combine with `-PwithCataclysm=true` for the shield samples. Registry-only test references verify Iron's autoloader inventory reload before/after firing, Goety's multi-use revolver magazine and persistence between shots, eligibility of Cataclysm Bulwark/black-steel targe/azure sea shield, actual blocking on its non-ShieldItem Bulwark, and the original sneaking-release dash/cooldown. Production has no hard dependency or special-case implementation for any of these items.
