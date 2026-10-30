@@ -26,6 +26,16 @@ public final class SwordChecks {
         var saved=ItemStack.of(stack.save(new net.minecraft.nbt.CompoundTag()));var buf=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
         try {buf.writeItem(saved);return buf.readItem();} finally {buf.release();}
     }
+    public static void existingMagic(ItemStack stack) {
+        var original=com.google.common.collect.ArrayListMultimap.create(stack.getAttributeModifiers(net.minecraft.world.entity.EquipmentSlot.MAINHAND));
+        original.forEach((a,m)->stack.addAttributeModifier(a,m,net.minecraft.world.entity.EquipmentSlot.MAINHAND));
+        stack.addAttributeModifier(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS.get(),
+            new net.minecraft.world.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("da0ff177-3acf-41ad-8ee6-3d28d47ce6ac"),"existing_magic",3,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION),net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+    }
+    public static double spellDamage(LivingEntity actor) {return actor.getAttributeValue(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS.get());}
+    public static List<String> physicalStats(ItemStack stack) {
+        var result=new ArrayList<String>();stack.getAttributeModifiers(net.minecraft.world.entity.EquipmentSlot.MAINHAND).forEach((a,m)->{if(a!=com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS.get())result.add(a.getDescriptionId()+"/"+m.getId()+"/"+m.getAmount()+"/"+m.getOperation());});return result;
+    }
     public static List<String> stats(ItemStack s) {var list=new ArrayList<String>();s.getAttributeModifiers(net.minecraft.world.entity.EquipmentSlot.MAINHAND).forEach((a,m)->list.add(a.getDescriptionId()+"/"+m.getId()+"/"+m.getAmount()+"/"+m.getOperation()));return list;}
     public static void hit(ItemStack s,LivingEntity target,ServerPlayer player) {s.hurtEnemy(target,player);}
     public static void mana(ServerPlayer player,int n) {CapabilityRegistry.getMana(player).ifPresent(m->{m.setMaxMana(1000);m.setMana(n);});}

@@ -9,6 +9,17 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 public final class SwordPlatform {
     private static final String KEY="ars_fusion:sword_fusion";
     private SwordPlatform() {}
+    public static void register(net.minecraftforge.eventbus.api.IEventBus bus) {net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(SwordPlatform::attributes);}
+    private static void attributes(net.minecraftforge.event.ItemAttributeModifierEvent event) {
+        var slot=event.getSlotType();
+        if(!SwordFusion.has(event.getItemStack())||slot!=net.minecraft.world.entity.EquipmentSlot.MAINHAND)return;
+        var attribute=com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS.get();
+        // Ars 4 has no native sword modifier here; retain its implicit Amplify rather than inventing an extra +4.
+        for(var modifier:NativeSwordCasting.sword().getDefaultInstance().getAttributeModifiers(slot).get(attribute)) {
+            String key="ars_fusion:enchanters_spell_damage/"+modifier.getId();
+            event.addModifier(attribute,new net.minecraft.world.entity.ai.attributes.AttributeModifier(java.util.UUID.nameUUIDFromBytes(key.getBytes(java.nio.charset.StandardCharsets.UTF_8)),key,modifier.getAmount(),modifier.getOperation()));
+        }
+    }
     public static boolean has(ItemStack stack) {return stack.hasTag()&&stack.getTag().getBoolean(KEY);}
     public static void mark(ItemStack stack) {stack.getOrCreateTag().putBoolean(KEY,true);}
     public static boolean existingCaster(ItemStack stack) {

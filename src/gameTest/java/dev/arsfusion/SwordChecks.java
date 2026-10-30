@@ -26,6 +26,15 @@ public final class SwordChecks {
         var saved=ItemStack.parse(h.getLevel().registryAccess(),stack.save(h.getLevel().registryAccess())).orElseThrow();var buf=new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(),h.getLevel().registryAccess());
         try {ItemStack.STREAM_CODEC.encode(buf,saved);return ItemStack.STREAM_CODEC.decode(buf);} finally {buf.release();}
     }
+    public static void existingMagic(ItemStack stack) {
+        var mods=stack.getOrDefault(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS,net.minecraft.world.item.component.ItemAttributeModifiers.EMPTY);
+        stack.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS,mods.withModifierAdded(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS,
+            new net.minecraft.world.entity.ai.attributes.AttributeModifier(net.minecraft.resources.ResourceLocation.tryParse("ars_fusion:existing_magic"),3,net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND));
+    }
+    public static double spellDamage(LivingEntity actor) {return actor.getAttributeValue(com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS);}
+    public static List<String> physicalStats(ItemStack stack) {
+        var result=new ArrayList<String>();stack.forEachModifier(net.minecraft.world.entity.EquipmentSlot.MAINHAND,(a,m)->{if(a.value()!=com.hollingsworth.arsnouveau.api.perk.PerkAttributes.SPELL_DAMAGE_BONUS.get())result.add(a.getRegisteredName()+"/"+m.id()+"/"+m.amount()+"/"+m.operation());});return result;
+    }
     public static List<String> stats(ItemStack s) {var list=new ArrayList<String>();s.forEachModifier(net.minecraft.world.entity.EquipmentSlot.MAINHAND,(a,m)->list.add(a.getRegisteredName()+"/"+m.id()+"/"+m.amount()+"/"+m.operation()));return list;}
     public static void hit(ItemStack s,LivingEntity target,ServerPlayer player) {if(s.hurtEnemy(target,player))s.postHurtEnemy(target,player);}
     public static void mana(ServerPlayer player,int n) {var m=CapabilityRegistry.getMana(player);m.setMaxMana(1000);m.setMana(n);}

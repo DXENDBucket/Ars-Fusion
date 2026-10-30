@@ -2,7 +2,7 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.5**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.6**, common policy, compatibility code and integration checks.
 
 ## Staff attributes on Ars casting equipment
 
@@ -51,6 +51,8 @@ Targets use `ars_fusion:bow_fusion_targets` and `ars_fusion:bow_fusion_blacklist
 Use a normal anvil: **receiving weapon/tool on the left + Enchanter's Sword on the right**, consuming both inputs and one XP level. Enabled by default through `sword_fusion.enabled`.
 
 The result stays the left item, retaining its appearance, damage, speed, enchantments, durability and ordinary interactions. It receives the sword's current spell and native scribe-table rewriting ability. Successful melee hits use the native sword casting path, with the real wielder and actual receiving tool. Existing Conflux hooks on Enchanter's Sword therefore still apply when installed; Conflux remains optional. Only the original receiving item's melee durability behavior runs.
+
+Sword fusion also retains the native sword's **main-hand spell-damage attribute**: **+4 in Ars 5 / Minecraft 1.21.1**. It adds to the receiver's existing magical attributes without copying the sword's physical attack damage or speed. Existing fused items gain this bonus automatically; no recrafting is needed. Ars 4 / Minecraft 1.20.1 has no such native attribute and keeps its native implicit Amplify behavior instead.
 
 Default names are `Enchanter's Diamond Sword` / `巫师之钻石剑` (and equivalent original names for other tools). Explicit anvil/custom names take precedence.
 
@@ -141,4 +143,4 @@ Ars Fusion ships no copied Iron or Ars art assets and no original mod JARs. Fuse
 
 ## Development
 
-See [building and verification](docs/development.md). Shared policy and optional Iron adapter live in `common/`; components/NBT, events and configuration live in the platform source trees. Sword-style binding is separate from armor donor attributes; no sword damage, attack speed, enchantments or other donor numeric bonuses are copied.
+See [building and verification](docs/development.md). Shared policy and optional Iron adapter live in `common/`; components/NBT, events and configuration live in the platform source trees. Sword-style binding is separate from armor donor attributes; physical sword damage, attack speed and enchantments are not copied. The native main-hand spell-damage attribute is retained as an explicit exception.

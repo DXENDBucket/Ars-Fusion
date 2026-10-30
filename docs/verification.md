@@ -62,3 +62,13 @@ Core baseline remains 6af5a278122da13766c3d0a1dfcc30d2a94a63e0; Core tracked fil
 - Deployed NeoForge 0.1.5 to 万法归一; previous 0.1.4 JAR and both config files are backed up. Caster fusion, automatic donors and Goety traits are enabled there; the pack's existing tier toughness remains enabled. No graphical client was started for this change.
 
 Core tracked files remain unchanged at 6af5a278122da13766c3d0a1dfcc30d2a94a63e0. Logs and exact hashes: MinecraftDev/releases/ars-fusion-20261030/0.1.5-caster/manifest.json.
+
+
+# Verification: 0.1.6 native sword spell damage (2026-10-30)
+
+- NeoForge 1.21.1 / Ars 5.13.1 without Iron, Goety or Conflux: **4 required sword GameTests passed**. Actual equipped source/fused spell attributes and native spell damage match; the recipient's existing magical bonus and physical modifiers remain intact. Main-hand-only behavior, old markers, persistence/network data, repeated modifier queries and unequipping are covered.
+- Existing sword anvil, scribing, resource and original-tool-wear cases pass. Casting tests now advance real equipment ticks before native/fused hit comparisons.
+- Both platforms compile and package. Forge main/test compilation, reobfuscation and verifyRelease passed; a Forge runtime test was not repeated for this small attribute change. Native Ars 4 bytecode has no sword spell-damage modifier, so the adapter adds none and retains existing implicit Amplify behavior.
+- Native SpellBow, SpellCrossbow, EnchantersShield, Wand and EnchantersMirror class implementations in the checked Ars JARs do not add comparable permanent spell-damage attributes. Their discount/conditional-utility mechanisms are separate.
+- Final binary/source JARs passed MIT/no-native-assets/no-native-JAR/test-class audits. No Mixin selectors or AP output wiring changed. The NeoForge release was rebuilt after config-comment updates without repeating gameplay checks.
+- No graphical client was started. Release files and logs are staged in MinecraftDev/releases/ars-fusion-20261030/0.1.6-sword-bonus/manifest.json. Core tracked files remain unchanged at ca21d6e31f44928841cdb5594fc594ea85497371.

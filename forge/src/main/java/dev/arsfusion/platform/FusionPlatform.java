@@ -25,7 +25,7 @@ public final class FusionPlatform {
     public static boolean customName(ItemStack stack){return stack.hasCustomHoverName();}
     public static int tier(ItemStack stack){var perks=PerkUtil.getPerkHolder(stack);return perks==null?0:perks.getTier()+1;}
     public static void register(IEventBus bus) {
-        dev.arsfusion.api.ArmorDonors.installDefaults();BowPlatform.register(bus);EquipmentPlatform.register(bus);CasterPlatform.register(bus);MinecraftForge.EVENT_BUS.addListener(FusionPlatform::anvil);MinecraftForge.EVENT_BUS.addListener(FusionPlatform::attributes);MinecraftForge.EVENT_BUS.addListener(SwordPlatform::tooltip);}
+        dev.arsfusion.api.ArmorDonors.installDefaults();BowPlatform.register(bus);EquipmentPlatform.register(bus);CasterPlatform.register(bus);SwordPlatform.register(bus);MinecraftForge.EVENT_BUS.addListener(FusionPlatform::anvil);MinecraftForge.EVENT_BUS.addListener(FusionPlatform::attributes);MinecraftForge.EVENT_BUS.addListener(SwordPlatform::tooltip);}
     private static void anvil(AnvilUpdateEvent event) {
         var output=ArmorFusion.fuse(event.getLeft(),event.getRight());
         if(output.isEmpty())output=dev.arsfusion.sword.SwordFusion.fuse(event.getLeft(),event.getRight());

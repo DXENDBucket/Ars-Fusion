@@ -12,7 +12,7 @@ Read README.md and docs/development.md before editing. The shared local workflow
 
 - Explicit adapters use api/ArmorFusionAdapter and api/ArmorDonors. They take priority over generic attribute transfer. Force-auto only bypasses them during new fusion and only with master+auto enabled. Do not strip stored native casting data when a crafting policy changes.
 
-- Sword-style fusion is a separate casting layer; never copy donor weapon modifiers or install caster/scribe interfaces on every Item. Use per-stack markers and the scoped scribe recognition redirect.
+- Sword-style fusion is a separate casting layer; retain only the native spell-damage modifier, never physical weapon modifiers, and do not install caster/scribe interfaces on every Item. Use per-stack markers and the scoped scribe recognition redirect.
 - Keep native Enchanter's Sword as the executor so optional Conflux hooks are naturally honored. NativeSwordCasting's thread-local scope suppresses only the delegated SwordItem physical fallback; the original receiving item owns its normal hit/wear behavior. Always clear scope in finally.
 - Default targets are swords/axes/pickaxes/shovels/hoes via tags, max stack size one, blacklist takes precedence, and existing Ars casting is never overwritten. No right-click casting, bow/crossbow/shield behavior, donor discount or numeric weapon properties are implied.
 
@@ -27,3 +27,5 @@ Read README.md and docs/development.md before editing. The shared local workflow
 
 - Caster attribute fusion augments an existing Ars caster without replacing its native caster data. Ars spellbooks are valid recipients; Iron spellbooks are not recipients or donors, and no spellbooks are staff materials. Keep slot-specific attribute transfer in CasterPlatform, using its independent blacklist and stable namespaced modifier IDs.
 - Optional Goety staff integration exposes intrinsic donor item identity through native WandUtil only. Never transplant focus contents/enchantments or replace the receiver's native use loop. Preserve main-hand-first priority and guard optional classes. IronCaster handles staff recognition/book exclusion only; no second Curios spellbook panel is transferred.
+
+- SwordPlatform retains native Enchanter sword SPELL_DAMAGE_BONUS modifiers under stable owned IDs in the native main-hand slot. Read native values/operations; do not hardcode +4 into Forge Ars 4, whose implicit Amplify is already preserved. Existing sword markers gain this bonus without new stored data.

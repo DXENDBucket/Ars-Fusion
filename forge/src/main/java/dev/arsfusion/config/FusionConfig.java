@@ -53,7 +53,7 @@ public final class FusionConfig {
         builder.push("sword_fusion");
         SWORD_FUSION_ENABLED=builder.comment("Allow one anvil fusion: receiving tool on the left, Enchanter's Sword on the right, for one XP level.",
                 "Targets use spell_fusion_targets and spell_fusion_blacklist item tags; max stack size must be one and existing Ars casting is rejected.",
-                "Only native casting data/behavior is added. Does not copy donor damage, speed, durability or enchantments. Existing bindings survive disabling crafting.")
+                "Native casting and its spell-damage attribute are retained. Physical attack damage/speed, durability and enchantments do not transfer. Existing bindings survive disabling crafting.")
                 .define("enabled",true);
         builder.pop();
         builder.push("armor_fusion");

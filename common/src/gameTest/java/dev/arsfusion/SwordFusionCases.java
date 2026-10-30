@@ -32,11 +32,11 @@ public final class SwordFusionCases {
             var reserved=Items.DIAMOND_SWORD.getDefaultInstance();SwordChecks.write(reserved,true,false);
             h.assertTrue(!SwordFusion.canFuse(reserved,donor),"Never overwrite an existing Ars caster");
             var left=Items.DIAMOND_AXE.getDefaultInstance();left.setDamageValue(17);SwordChecks.enchant(h,left);
-            var attributes=SwordChecks.stats(left);player.experienceLevel=10;
+            var attributes=SwordChecks.physicalStats(left);player.experienceLevel=10;
             var menu=new AnvilMenu(1,player.getInventory(),ContainerLevelAccess.NULL);
             menu.getSlot(0).set(left.copy());menu.getSlot(1).set(donor.copy());menu.createResult();
             var result=menu.getSlot(2).getItem().copy();
-            h.assertTrue(result.is(left.getItem())&&result.getDamageValue()==17&&result.isEnchanted()&&SwordChecks.stats(result).equals(attributes),"Only casting is transferred; retain original item, enchantments, durability and all physical modifiers");
+            h.assertTrue(result.is(left.getItem())&&result.getDamageValue()==17&&result.isEnchanted()&&SwordChecks.physicalStats(result).equals(attributes),"Casting and native spell bonus transfer; retain original item, enchantments, durability and all physical modifiers");
             h.assertTrue(!dev.arsfusion.platform.SwordPlatform.existingCaster(left),"Input is unchanged");
             h.assertTrue(SwordChecks.recipe(result).equals(SwordChecks.recipe(donor)),"Copy current native spell");
             h.assertTrue(result.getHoverName().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents name&&name.getKey().equals("item.ars_fusion.enchanters_tool"),"Enchanter's original-name localization");
@@ -50,6 +50,27 @@ public final class SwordFusionCases {
             h.assertTrue(SwordFusion.fuse(left,donor).isEmpty()&&SwordFusion.has(saved),"Disable creation without stripping existing bindings");
         } finally {FusionConfig.SWORD_FUSION_ENABLED.set(old);}
         h.succeed();
+    }
+    public static void nativeSpellBonus(GameTestHelper h,ServerPlayer player) {
+        h.getLevel().addNewPlayer(player);
+        try {
+            double base=SwordChecks.spellDamage(player);player.setItemInHand(InteractionHand.MAIN_HAND,donor());player.doTick();
+            double nativeBonus=SwordChecks.spellDamage(player)-base;
+            var plain=Items.DIAMOND_AXE.getDefaultInstance();SwordChecks.existingMagic(plain);
+            var fused=SwordChecks.roundTrip(h,SwordFusion.fuse(plain,donor()));
+            player.setItemInHand(InteractionHand.MAIN_HAND,fused);player.doTick();
+            h.assertTrue(Math.abs(SwordChecks.spellDamage(player)-base-3-nativeBonus)<0.001,"Native sword spell bonus adds once to the receiver's own magic attribute");
+            h.assertTrue(SwordChecks.physicalStats(fused).equals(SwordChecks.physicalStats(plain)),"Native sword physical damage and attack speed do not transfer");
+            for(int i=0;i<5;i++)SwordChecks.stats(fused);
+            player.doTick();h.assertTrue(Math.abs(SwordChecks.spellDamage(player)-base-3-nativeBonus)<0.001,"Repeated modifier queries do not accumulate bonuses");
+            var legacy=plain.copy();dev.arsfusion.platform.SwordPlatform.mark(legacy);
+            player.setItemInHand(InteractionHand.MAIN_HAND,legacy);player.doTick();
+            h.assertTrue(Math.abs(SwordChecks.spellDamage(player)-base-3-nativeBonus)<0.001,"Old boolean-only fusion markers receive the native bonus without recrafting");
+            player.setItemInHand(InteractionHand.MAIN_HAND,ItemStack.EMPTY);player.setItemInHand(InteractionHand.OFF_HAND,fused);player.doTick();
+            h.assertTrue(Math.abs(SwordChecks.spellDamage(player)-base)<0.001,"Main-hand-only native bonus is absent in offhand");
+            player.setItemInHand(InteractionHand.OFF_HAND,ItemStack.EMPTY);player.doTick();
+            h.assertTrue(Math.abs(SwordChecks.spellDamage(player)-base)<0.001,"Unequipping removes the full bonus");h.succeed();
+        } finally {player.discard();}
     }
     public static void nativeScribing(GameTestHelper h,ServerPlayer player) {
         var result=SwordFusion.fuse(Items.DIAMOND_SWORD.getDefaultInstance(),donor());
@@ -67,11 +88,11 @@ public final class SwordFusionCases {
         var a=h.spawn(EntityType.PIG,new net.minecraft.core.BlockPos(1,2,1));
         var b=h.spawn(EntityType.PIG,new net.minecraft.core.BlockPos(3,2,1));
         var c=h.spawn(EntityType.PIG,new net.minecraft.core.BlockPos(5,2,1));
-        SwordChecks.mana(player,1000);player.setItemInHand(InteractionHand.MAIN_HAND,nativeSword);
+        SwordChecks.mana(player,1000);player.setItemInHand(InteractionHand.MAIN_HAND,nativeSword);player.doTick();
         float before=a.getHealth();SwordChecks.hit(nativeSword,a,player);float nativeDamage=before-a.getHealth();
         h.assertTrue(nativeDamage>0,"Native sword baseline actually casts");
-        var plain=Items.DIAMOND_AXE.getDefaultInstance();player.setItemInHand(InteractionHand.MAIN_HAND,plain);SwordChecks.hit(plain,c,player);int wear=plain.getDamageValue();
-        SwordChecks.mana(player,1000);double mana=SwordChecks.mana(player);player.setItemInHand(InteractionHand.MAIN_HAND,bound);
+        var plain=Items.DIAMOND_AXE.getDefaultInstance();player.setItemInHand(InteractionHand.MAIN_HAND,plain);player.doTick();SwordChecks.hit(plain,c,player);int wear=plain.getDamageValue();
+        SwordChecks.mana(player,1000);double mana=SwordChecks.mana(player);player.setItemInHand(InteractionHand.MAIN_HAND,bound);player.doTick();
         before=b.getHealth();SwordChecks.hit(bound,b,player);
         h.assertTrue(Math.abs((before-b.getHealth())-nativeDamage)<0.001,"Exactly one native spell dispatch using real attacker/tool context");
         h.assertTrue(SwordChecks.mana(player)<mana,"Native Ars mana payment still applies");
