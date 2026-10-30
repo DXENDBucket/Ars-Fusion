@@ -1,6 +1,7 @@
 package dev.arsfusion.armor;
 
 import dev.arsfusion.compat.IronArmor;
+import dev.arsfusion.api.ArmorDonors;
 import dev.arsfusion.config.FusionConfig;
 import dev.arsfusion.platform.FusionPlatform;
 import net.minecraft.network.chat.Component;
@@ -31,23 +32,30 @@ public final class ArmorFusion {
     public static ItemStack donor(ItemStack stack) {
         if (!has(stack)) return ItemStack.EMPTY;
         var donor = FusionPlatform.donor(stack);
-        return iron(donor) && slot(donor) == slot(stack) ? donor : ItemStack.EMPTY;
+        return isDonorArmor(donor) && slot(donor) == slot(stack) ? donor : ItemStack.EMPTY;
+    }
+
+    private static boolean isDonorArmor(ItemStack donor) {
+        // Ars is the receiving layer. Do not nest fused snapshots or fuse two Ars sets.
+        return donor.getItem() instanceof ArmorItem && !ars(donor) && !FusionPlatform.has(donor);
     }
 
     public static boolean canFuse(ItemStack ars, ItemStack donor) {
-        return FusionConfig.armorFusionEnabled() && ars(ars) && iron(donor)
-                && !has(ars) && slot(ars) == slot(donor);
+        return FusionConfig.armorFusionEnabled() && ars(ars) && isDonorArmor(donor)
+                && !has(ars) && slot(ars) == slot(donor)
+                && (FusionConfig.automaticArmorCompatibility() || ArmorDonors.manualAdapter(donor) != null);
     }
 
     public static ItemStack fuse(ItemStack ars, ItemStack donor) {
         if (!canFuse(ars, donor)) return ItemStack.EMPTY;
         var snapshot = donor.copy();
         snapshot.setCount(1);
-        IronArmor.initialize(snapshot);
+        var adapter = FusionConfig.automaticOnly() ? null : ArmorDonors.manualAdapter(snapshot);
+        if (adapter != null) adapter.prepareDonor(snapshot);
         var result = ars.copy();
         result.setCount(1);
         FusionPlatform.set(result, snapshot);
-        IronArmor.transferSpells(snapshot, result);
+        if (adapter != null) adapter.transferData(snapshot, result);
         return result;
     }
 

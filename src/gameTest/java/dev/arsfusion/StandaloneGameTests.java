@@ -13,7 +13,7 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder("ars_fusion") @PrefixGameTestTemplate(false)
 public final class StandaloneGameTests {
     @GameTest(template="empty") public static void standaloneAndUncappedToughness(GameTestHelper h) {
-        h.assertTrue(!FusionConfig.ARMOR_FUSION_ENABLED.getDefault()&&!FusionConfig.TOUGHNESS_ENABLED.getDefault(),"Both changes are disabled by default");
+        h.assertTrue(FusionConfig.ARMOR_FUSION_ENABLED.getDefault()&&FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.getDefault()&&!FusionConfig.TOUGHNESS_ENABLED.getDefault(),"Fusion and automatic compatibility default on; toughness defaults off");
         var source=BuiltInRegistries.ITEM.stream().map(ItemStack::new).filter(ArmorFusion::ars).findFirst().orElseThrow();
         boolean old=FusionConfig.TOUGHNESS_ENABLED.get();double amount=FusionConfig.ARS_ARMOR_TOUGHNESS_PER_TIER.get();
         // A higher-tier addon must also provide enough native perk slot tiers.

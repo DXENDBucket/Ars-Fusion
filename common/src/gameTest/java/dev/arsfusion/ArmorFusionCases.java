@@ -34,14 +34,15 @@ public final class ArmorFusionCases {
     }
     static void enabled(Runnable test) {
         boolean old = FusionConfig.ARMOR_FUSION_ENABLED.get();
-        try { FusionConfig.ARMOR_FUSION_ENABLED.set(true); test.run(); }
-        finally { FusionConfig.ARMOR_FUSION_ENABLED.set(old); }
+        boolean auto = FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.get();
+        try { FusionConfig.ARMOR_FUSION_ENABLED.set(true); FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.set(false); test.run(); }
+        finally { FusionConfig.ARMOR_FUSION_ENABLED.set(old); FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.set(auto); }
     }
     public static void anvil(GameTestHelper h, ServerPlayer player) {
         var left = ars(ArmorItem.Type.CHESTPLATE);
         var right = iron(ArmorItem.Type.CHESTPLATE);
-        h.assertTrue(!FusionConfig.ARMOR_FUSION_ENABLED.getDefault()
-                && FusionConfig.TOUGHNESS_ENABLED.getDefault() == false, "Release defaults are opt-in");
+        h.assertTrue(FusionConfig.ARMOR_FUSION_ENABLED.getDefault()
+                && FusionConfig.TOUGHNESS_ENABLED.getDefault() == false, "Fusion is enabled by default; toughness is opt-in");
         boolean old = FusionConfig.ARMOR_FUSION_ENABLED.get();
         try {
             FusionConfig.ARMOR_FUSION_ENABLED.set(false);
@@ -98,6 +99,30 @@ public final class ArmorFusionCases {
             FusionConfig.ARMOR_FUSION_ENABLED.set(false);
             h.assertTrue(ArmorFusion.has(saved) && ISpellContainer.get(saved).getActiveSpellCount() == 1,
                     "Disabling fusion only prevents new recipes");
+        });
+        h.succeed();
+    }
+    public static void manualCompatibilityOverride(GameTestHelper h) {
+        enabled(() -> {
+            var source=ars(ArmorItem.Type.CHESTPLATE);var donor=iron(ArmorItem.Type.CHESTPLATE);
+            boolean auto=FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.get();
+            boolean disabled=FusionConfig.DISABLE_MANUAL_COMPATIBILITY.get();
+            try {
+                FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.set(true);FusionConfig.DISABLE_MANUAL_COMPATIBILITY.set(false);
+                var manual=ArmorFusion.fuse(source,donor);
+                h.assertTrue(ISpellContainer.get(manual)!=null&&ISpellContainer.get(manual).getMaxSpellCount()==1,"Default uses dedicated Iron spell-container integration");
+                FusionConfig.DISABLE_MANUAL_COMPATIBILITY.set(true);
+                var automatic=ArmorFusion.fuse(source,donor);var spells=ISpellContainer.get(automatic);
+                h.assertTrue(!automatic.isEmpty()&&(spells==null||spells.getMaxSpellCount()==0),"Force automatic mode skips native Iron spell-container transfer");
+                h.assertTrue(ISpellContainer.get(manual).getMaxSpellCount()==1,"Switch never erases data from existing manual fusions");
+                FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.set(false);
+                var fallback=ArmorFusion.fuse(source,donor);
+                h.assertTrue(ISpellContainer.get(fallback)!=null&&ISpellContainer.get(fallback).getMaxSpellCount()==1,"Disable-manual flag is inactive unless automatic compatibility is also enabled");
+                FusionConfig.ARMOR_FUSION_ENABLED.set(false);
+                h.assertTrue(ArmorFusion.fuse(source,donor).isEmpty(),"Master switch still prevents every fusion route");
+            } finally {
+                FusionConfig.AUTOMATIC_ARMOR_COMPATIBILITY.set(auto);FusionConfig.DISABLE_MANUAL_COMPATIBILITY.set(disabled);
+            }
         });
         h.succeed();
     }

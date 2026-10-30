@@ -81,4 +81,7 @@ public final class ArmorFusionGameTests {
         });
         h.succeed();
     }
+    @GameTest(template="empty") public static void conditionalManualCompatibilityOverride(GameTestHelper h) {
+        ArmorFusionCases.manualCompatibilityOverride(h);
+    }
 }

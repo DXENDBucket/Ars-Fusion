@@ -40,6 +40,7 @@ public final class FusionPlatform {
     public static boolean customName(ItemStack stack){return stack.has(DataComponents.CUSTOM_NAME);}
     public static int tier(ItemStack stack){var perks=PerkUtil.getPerkHolder(stack);return perks==null?0:perks.getTier()+1;}
     public static void register(IEventBus bus) {
+        dev.arsfusion.api.ArmorDonors.installDefaults();
         TYPES.register(bus);
         if(!net.neoforged.fml.ModList.get().isLoaded("irons_nouveau")) {
             LEGACY.register("armor_fusion",()->DataComponentType.<ItemContainerContents>builder().persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC).build());
@@ -57,8 +58,9 @@ public final class FusionPlatform {
         var stack=event.getItemStack();if(!ArmorFusion.ars(stack))return;
         var slot=ArmorFusion.slot(stack);var group=EquipmentSlotGroup.bySlot(slot);var donor=ArmorFusion.donor(stack);
         if(!donor.isEmpty())donor.forEachModifier(slot,(attribute,modifier)->{
-            if(attribute.value()==Attributes.ARMOR.value()||attribute.value()==Attributes.ARMOR_TOUGHNESS.value())return;
-            var key=BuiltInRegistries.ATTRIBUTE.getKey(attribute.value());var original=modifier.id();
+            var key=BuiltInRegistries.ATTRIBUTE.getKey(attribute.value());
+            if(key==null||!dev.arsfusion.config.FusionConfig.allowsAttribute(key.toString()))return;
+            var original=modifier.id();
             var id=ResourceLocation.fromNamespaceAndPath("ars_fusion","fusion/"+slot.getName()+"/"+key.getNamespace()+"/"+key.getPath()+"/"+original.getNamespace()+"/"+original.getPath());
             event.addModifier(attribute,new AttributeModifier(id,modifier.amount(),modifier.operation()),group);
         });

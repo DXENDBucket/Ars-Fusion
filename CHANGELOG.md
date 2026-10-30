@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1
+
+- Enable armor fusion by default; keep additional tier toughness opt-in.
+- Add automatic same-slot modifier transfer for standard non-Ars armor, enabled by default. Dedicated adapters such as Iron keep priority.
+- Add an editable attribute blacklist; default excludes armor and armor toughness. Vanilla netherite contributes knockback resistance only.
+- Add default-off manual-compatibility bypass, effective only when master fusion and automatic compatibility are enabled. Existing fused casting data is retained.
+- Add public explicit-adapter registration API and automatic donor persistent/network checks.
+
 ## 0.1.0
 
 - Extract optional same-slot anvil armor fusion from Iron & Nouveau. Preserve Ars identity, appearance, threads, upgrades and enchantments; transfer donor attributes except armor/toughness and supported native Iron spell data.

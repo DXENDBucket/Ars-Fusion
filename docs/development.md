@@ -49,3 +49,17 @@ Toughness is based on `PerkUtil.getPerkHolder(stack).getTier() + 1`, multiplied 
 Sorcerer, Arcanist and Battlemage are parallel sets, each starting at armor tier 1 and supporting two upgrades. Native Ars stores that armor upgrade tier in its perk-holder data; it simultaneously controls mana regeneration and native thread-slot progression. Reading `getTier()+1` therefore reads the actual armor upgrade tier. Do not map the three sets to three different tiers, or infer armor tier from the highest inserted thread/slot.
 
 Ars Fusion does not change thread slots. The temporary six-tier slot/provider extension exists only in the test fixture so native Ars can safely process simulated future armor upgrades above its current three tiers. Tests cover all twelve native armor pieces at all three normal upgrade tiers, as well as that future-tier fixture.
+
+## Donor adapters and automatic fallback (0.1.1)
+
+`api/ArmorFusionAdapter` provides `supports`, `prepareDonor` and `transferData`. Register it through `ArmorDonors.register` on both sides during mod setup; later, more-specific registrations take priority. Shared code still performs attribute copying and filtering. Built-in Iron support registers only if Iron is present.
+
+`ArmorFusion.canFuse` checks recipient identity, standard ArmorItem donor, same slot, and one fusion only. A manual adapter can make a supported donor available with automatic compatibility disabled. With master+auto enabled, `disable_manual_compatibility` bypasses manual preparation/data transfer; modifiers still follow the same engine. Reading existing fused snapshots does not depend on current crafting toggles.
+
+Both platforms consult `FusionConfig.allowsAttribute` when copying donor modifiers. The ID blacklist is synchronized server policy, cached as a normalized set and permits unknown well-formed IDs. Defaults exclude `minecraft:generic.armor` and `minecraft:generic.armor_toughness`; an empty list permits defense modifiers too. Source Ars modifiers and optional native-tier toughness are independent of the donor blacklist.
+
+New tests cover an unregistered vanilla armor item with custom modifiers and a wrong-slot modifier, unchanged inputs, save/network round trips, policy toggles, vanilla netherite, a custom blacklist and an empty blacklist. Iron tests run with automatic compatibility off, and separately verify forced automatic mode skips native spell containers only under the requested master+auto combination.
+
+### Attribute ownership
+
+Manual compatibility does not own a second attribute path. IronArmor only recognizes its supported donor, initializes a native spell container on the donor snapshot, and copies that container to the Ars result. Both dedicated and automatic donors then use the same platform attribute event handler and shared blacklist policy. Automatic compatibility controls eligibility of unregistered donors, not whether registered donors receive attributes. Force-auto skips manual preparation/data transfer while keeping that common attribute path.
