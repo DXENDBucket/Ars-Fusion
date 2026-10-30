@@ -1,0 +1,42 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#c:tools/staff",
+      "required": false
+    },
+    {
+      "id": "#c:tools/staffs",
+      "required": false
+    },
+    {
+      "id": "#c:tools/staves",
+      "required": false
+    },
+    {
+      "id": "#c:tools/wand",
+      "required": false
+    },
+    {
+      "id": "#c:tools/wands",
+      "required": false
+    },
+    {
+      "id": "#forge:tools/staffs",
+      "required": false
+    },
+    {
+      "id": "#forge:tools/wands",
+      "required": false
+    },
+    {
+      "id": "#irons_spellbooks:staff",
+      "required": false
+    },
+    {
+      "id": "#goety:wands",
+      "required": false
+    },
+    "minecraft:brush"
+  ]
+}

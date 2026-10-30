@@ -9,6 +9,10 @@ import java.util.HashSet;
 /** Server policy is synchronized to clients. Crafting toggles never erase fused data. */
 public final class FusionConfig {
     public static final ForgeConfigSpec SPEC;
+    public static final ForgeConfigSpec.BooleanValue CASTER_FUSION_ENABLED, AUTOMATIC_CASTER_COMPATIBILITY, GOETY_STAFF_FUSION_ENABLED;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CASTER_ATTRIBUTE_BLACKLIST;
+    private static List<? extends String> cachedCasterEntries=List.of();
+    private static Set<String> cachedCasterBlacklist=Set.of();
     public static final ForgeConfigSpec.BooleanValue SWORD_FUSION_ENABLED;
     public static final ForgeConfigSpec.BooleanValue CROSSBOW_FUSION_ENABLED;
     public static final ForgeConfigSpec.BooleanValue AUTOMATIC_CROSSBOW_COMPATIBILITY;
@@ -26,6 +30,15 @@ public final class FusionConfig {
 
     static {
         var builder = new ForgeConfigSpec.Builder();
+        builder.push("caster_fusion");
+        CASTER_FUSION_ENABLED=builder.comment("Fuse one staff into an Ars spellbook, wand, mirror or tagged reusable caster in a normal anvil. Iron spellbooks and other spellbook materials are excluded.",
+                "Preserves the receiver's native spell data, slots, casting, rendering and wear. Consumes both items and one XP level; may be done once.").define("enabled",true);
+        AUTOMATIC_CASTER_COMPATIBILITY=builder.comment("Permit tagged casting materials with attribute-only transfer. Native Iron staffs and enabled Goety staff integration remain available independently.").define("automatic_compatibility",true);
+        GOETY_STAFF_FUSION_ENABLED=builder.comment("New Goety staff fusions retain intrinsic native staff-type/identity traits. Does not transplant focus contents, focus enchantments or a native Goety use loop.",
+                "Affects new fusions. Existing manual integration data remains usable.").define("goety_staff_compatibility",true);
+        CASTER_ATTRIBUTE_BLACKLIST=builder.comment("Attribute IDs excluded from staff donor modifiers. Defaults exclude attack damage/speed, armor and toughness; amount, operation and native hand slot otherwise remain unchanged.",
+                "Applies to existing fusions too; re-equip after changing.").defineListAllowEmpty("attribute_blacklist", List.of("minecraft:generic.attack_damage","minecraft:generic.attack_speed","minecraft:generic.armor","minecraft:generic.armor_toughness"), FusionConfig::validAttribute);
+        builder.pop();
         builder.push("crossbow_fusion");
         CROSSBOW_FUSION_ENABLED=builder.comment("Allow anvil fusion: receiving crossbow + Enchanter's Crossbow. Preserves native loading/firing; attaches spells at firing time using loaded ammo.").define("enabled",true);
         AUTOMATIC_CROSSBOW_COMPATIBILITY=builder.comment("Allow any CrossbowItem receiver, including untagged modded crossbows. Blacklist always wins. Disable to require crossbow_fusion_targets.").define("automatic_compatibility",true);
@@ -76,6 +89,17 @@ public final class FusionConfig {
     }
     private static boolean validAttribute(Object value) {
         return value instanceof String id && ResourceLocation.tryParse(id) != null;
+    }
+    public static boolean casterFusionEnabled() {return read(CASTER_FUSION_ENABLED);}
+    public static boolean automaticCasterCompatibility() {return read(AUTOMATIC_CASTER_COMPATIBILITY);}
+    public static boolean goetyStaffFusionEnabled() {return read(GOETY_STAFF_FUSION_ENABLED);}
+    public static synchronized boolean allowsCasterAttribute(String id) {
+        var entries=read(CASTER_ATTRIBUTE_BLACKLIST);
+        if(!entries.equals(cachedCasterEntries)) {
+            var set=new HashSet<String>();for(var entry:entries) {var key=ResourceLocation.tryParse(entry);if(key!=null)set.add(key.toString());}
+            cachedCasterEntries=List.copyOf(entries);cachedCasterBlacklist=Set.copyOf(set);
+        }
+        return !cachedCasterBlacklist.contains(id);
     }
     public static boolean automaticCrossbowCompatibility() {return read(AUTOMATIC_CROSSBOW_COMPATIBILITY);}
     public static boolean automaticShieldCompatibility() {return read(AUTOMATIC_SHIELD_COMPATIBILITY);}

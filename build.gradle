@@ -28,6 +28,7 @@ dependencies {
     if (providers.gradleProperty('withEquipmentFixtures').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: 'libs/equipment', include: '*.jar')
     compileOnly fileTree(dir: 'libs', include: '*.jar')
     compileOnly fileTree(dir: 'libs/coexist', include: '*conflux*.jar')
+    compileOnly files('libs/equipment/goety.jar')
     runtimeOnly fileTree(dir: 'libs', include: '*.jar', excludes: providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? ['iron.jar','irons-lib.jar','player-animation.jar'] : [])
     if (!providers.gradleProperty('withoutIron').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: 'libs/coexist', include: '*.jar')
 }

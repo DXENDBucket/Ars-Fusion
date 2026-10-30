@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "ars_nouveau:wand",
+    "ars_nouveau:enchanters_mirror",
+    "ars_nouveau:enchanters_sword",
+    "ars_nouveau:spell_bow",
+    "ars_nouveau:spell_crossbow",
+    "ars_nouveau:novice_spell_book",
+    "ars_nouveau:apprentice_spell_book",
+    "ars_nouveau:archmage_spell_book"
+  ]
+}

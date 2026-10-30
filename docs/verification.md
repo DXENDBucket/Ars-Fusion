@@ -49,3 +49,16 @@ Core baseline: 6af5a278122da13766c3d0a1dfcc30d2a94a63e0 (0.1.40); its tracked fi
 - Both release and source JARs contain only this project's production files/license. Graphical client rendering/HUD appearance and visual animations were not manually verified; original receiving-item models/animations are retained. Custom asynchronous/direct NPC firing paths or nonstandard event-free collisions/blocking remain outside the generic guarantee.
 
 Core baseline remains 6af5a278122da13766c3d0a1dfcc30d2a94a63e0; Core tracked files are unchanged. Final hashes, package copies and logs are recorded in MinecraftDev/releases/ars-fusion-20261030/0.1.4-equipment/manifest.json.
+
+
+# Verification: 0.1.5 casting-equipment attributes (2026-10-30)
+
+- NeoForge 1.21.1, Ars 5.13.1, Iron 3.16.3, native Goety 3.2.2 and Conflux 0.1.40: **5 required caster GameTests passed**.
+- Forge 1.20.1, Ars 4.12.7 without Iron, Goety or Conflux: **5 required cases passed**, including three substantive generic cases and two optional-mod cases that skip. This covers absence classloading and the Forge NBT/modifier implementation. Native Goety runtime behavior was exercised on NeoForge, not Forge.
+- Native anvil consumes both items and one XP level. Tests cover one-fusion policy, source snapshots, no transplanted enchantments, creation toggles, persistent/network round trips, all native Ars spellbooks as recipients (not donors), ten-slot data and selected last slot, per-hand amounts/operations, default/custom/empty blacklists and actual equipment removal.
+- Native mirror scribing matches its unfused counterpart. Ars 5 headless casting uses the same native caster server dispatch as PacketCastSpell; Ars 4 invokes the native item use. Baseline/fused healing and Mana fees match.
+- Native Iron Graybeard Staff contributes its actual magic modifiers; every registered native Iron spellbook is rejected. Native Goety WandUtil sees fused Frost Staff identity, and actual IceSpikeSpell produces IceSpear. Main/offhand priority and crafting-toggle persistence are checked. Focus contents are deliberately absent from the exposed native staff view.
+- Both binary/source JARs passed MIT/no-native-assets/no-native-JAR/test-class audits. Forge verifyRelease passed after reobfuscation, with all existing production mappings intact. Test-only API differences required fixture corrections, not gameplay changes.
+- Deployed NeoForge 0.1.5 to 万法归一; previous 0.1.4 JAR and both config files are backed up. Caster fusion, automatic donors and Goety traits are enabled there; the pack's existing tier toughness remains enabled. No graphical client was started for this change.
+
+Core tracked files remain unchanged at 6af5a278122da13766c3d0a1dfcc30d2a94a63e0. Logs and exact hashes: MinecraftDev/releases/ars-fusion-20261030/0.1.5-caster/manifest.json.

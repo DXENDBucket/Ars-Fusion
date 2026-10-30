@@ -42,6 +42,8 @@ dependencies {
         else implementation fg.deobf("local:${name}:forge1201")
     }
     compileOnly fg.deobf('local:ars-conflux:coexist')
+    compileOnly fg.deobf('local:goety:equipment')
+    if (providers.gradleProperty('withGoety').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:goety:equipment')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:irons-nouveau:coexist')
     if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:ars-conflux:coexist')

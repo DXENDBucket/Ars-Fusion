@@ -2,7 +2,17 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.4**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.5**, common policy, compatibility code and integration checks.
+
+## Staff attributes on Ars casting equipment
+
+Normal anvil: **Ars spellbook, wand, mirror or other supported Ars caster on the left + staff on the right**, one XP level. Enabled by default through `caster_fusion.enabled`; each recipient accepts one staff. Ars spellbooks remain normal spellbooks, retaining all spell slots, editing, upgrades, casting and appearance. **Iron spellbooks are not fusion materials**: their Curios bonuses cannot be duplicated this way. Ars spellbooks are not staff materials either.
+
+The donor adds its item attribute modifiers for the same native hand slot, preserving amounts and operations. The default caster blacklist excludes attack damage, attack speed, armor and armor toughness. It has its own configuration and does not change the armor-fusion blacklist. Donor enchantments, durability, focus contents, spell slots and item-specific use actions do not transfer. The left item retains its native mana discount, if any; the source staff's non-attribute discounts do not transfer automatically.
+
+Native Iron staffs are recognized directly. Other materials use `ars_fusion:caster_fusion_materials`, which includes optional common/Forge staff/wand tags. Automatic compatibility defaults on and can be disabled independently. Default recipients include native Ars spellbooks, wand, mirror, Enchanter's Sword, Bow and Crossbow; datapacks can extend `ars_fusion:caster_fusion_targets` to other existing nonstackable Ars casters. Target and material blacklist tags always win.
+
+Optional Goety integration retains the donor staff's intrinsic staff type/identity, enabling native staff-specific spell variants through Goety's existing lookup (for example, Frost Staff's Ice Spear variant). It works independently of Goety & Nouveau and preserves native main-hand-first priority. Focus contents and focus enchantments are not transplanted, and the result still uses Ars controls. Disabling `goety_staff_compatibility` affects new fusions; previously stored staff traits remain usable. With automatic compatibility on, tagged Goety staffs can still contribute attributes alone.
 
 ## Enchanter's Crossbow fusion
 
@@ -85,6 +95,12 @@ The default attribute blacklist is armor and armor toughness. **Vanilla netherit
 `ars_fusion-server.toml` (NeoForge: `config/`; Forge: world's `serverconfig/`):
 
 ```toml
+[caster_fusion]
+enabled = true
+automatic_compatibility = true
+goety_staff_compatibility = true
+attribute_blacklist = ["minecraft:generic.attack_damage", "minecraft:generic.attack_speed", "minecraft:generic.armor", "minecraft:generic.armor_toughness"]
+
 [crossbow_fusion]
 enabled = true
 automatic_compatibility = true
@@ -116,6 +132,7 @@ The 万法归一 pack enables tier toughness as well. Pack authors should config
 
 - Ars Nouveau is required. Ars Conflux is not required.
 - Iron's Spells 'n Spellbooks is optional. Dedicated Iron armor fusion needs it; generic modifier transfer and tier toughness do not.
+- Goety is optional. Native staff identity integration requires it; generic attribute fusion does not.
 - Iron & Nouveau is optional. When installed alongside Ars Fusion, use **0.17.32 or newer**; older versions can apply their own fusion modifiers. This minimum is enforced by loader metadata.
 - Old `irons_nouveau:armor_fusion` components / NBT remain readable. NeoForge registers the historical codec only when its former owner is absent. New fusions use `ars_fusion:armor_fusion`.
 - Iron & Nouveau 0.17.32 retains old-item behavior on its own and hands off to Ars Fusion when installed. Its historical creation/toughness settings no longer enable the migrated features.

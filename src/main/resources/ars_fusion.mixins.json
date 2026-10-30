@@ -17,7 +17,8 @@
     "BowArrowAccessor",
     "FusedCrossbowUseMixin",
     "FusedShieldBlockMixin",
-    "FusedShieldRepairMixin"
+    "FusedShieldRepairMixin",
+    "OptionalGoetyCasterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

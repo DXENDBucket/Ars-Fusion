@@ -40,7 +40,7 @@ public final class FusionPlatform {
     public static boolean customName(ItemStack stack){return stack.has(DataComponents.CUSTOM_NAME);}
     public static int tier(ItemStack stack){var perks=PerkUtil.getPerkHolder(stack);return perks==null?0:perks.getTier()+1;}
     public static void register(IEventBus bus) {
-        dev.arsfusion.api.ArmorDonors.installDefaults();BowPlatform.register(bus);EquipmentPlatform.register(bus);
+        dev.arsfusion.api.ArmorDonors.installDefaults();BowPlatform.register(bus);EquipmentPlatform.register(bus);CasterPlatform.register(bus);
         SwordPlatform.register(bus);
         TYPES.register(bus);
         if(!net.neoforged.fml.ModList.get().isLoaded("irons_nouveau")) {
@@ -55,6 +55,7 @@ public final class FusionPlatform {
         if(output.isEmpty())output=dev.arsfusion.bow.BowFusion.fuse(event.getLeft(),event.getRight());
         if(output.isEmpty())output=dev.arsfusion.crossbow.CrossbowFusion.fuse(event.getLeft(),event.getRight());
         if(output.isEmpty())output=dev.arsfusion.shield.ShieldFusion.fuse(event.getLeft(),event.getRight());
+        if(output.isEmpty())output=dev.arsfusion.caster.CasterFusion.fuse(event.getLeft(),event.getRight());
         if(output.isEmpty())return;
         String name=event.getName();
         if(name!=null&&!name.isBlank()&&!name.equals(event.getLeft().getHoverName().getString()))output.set(DataComponents.CUSTOM_NAME,Component.literal(name));
