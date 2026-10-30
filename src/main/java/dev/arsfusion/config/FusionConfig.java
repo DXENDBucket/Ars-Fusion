@@ -10,6 +10,7 @@ import java.util.HashSet;
 public final class FusionConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue SWORD_FUSION_ENABLED;
+    public static final ModConfigSpec.BooleanValue BOW_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue ARMOR_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue AUTOMATIC_ARMOR_COMPATIBILITY;
     public static final ModConfigSpec.BooleanValue DISABLE_MANUAL_COMPATIBILITY;
@@ -21,6 +22,10 @@ public final class FusionConfig {
 
     static {
         var builder = new ModConfigSpec.Builder();
+        builder.push("bow_fusion");
+        BOW_FUSION_ENABLED=builder.comment("Allow anvil fusion: receiving bow + Enchanter's Bow. Preserves native firing and projectile types; attaches Ars spells to successful hits.",
+                "Supports native Ars augment arrows. Existing bindings survive disabling crafting.").define("enabled",true);
+        builder.pop();
         builder.push("sword_fusion");
         SWORD_FUSION_ENABLED=builder.comment("Allow one anvil fusion: receiving tool on the left, Enchanter's Sword on the right, for one XP level.",
                 "Targets use spell_fusion_targets and spell_fusion_blacklist item tags; max stack size must be one and existing Ars casting is rejected.",
@@ -61,6 +66,7 @@ public final class FusionConfig {
     private static boolean validAttribute(Object value) {
         return value instanceof String id && ResourceLocation.tryParse(id) != null;
     }
+    public static boolean bowFusionEnabled() {return read(BOW_FUSION_ENABLED);}
     public static boolean swordFusionEnabled() {return read(SWORD_FUSION_ENABLED);}
     public static boolean armorFusionEnabled() { return read(ARMOR_FUSION_ENABLED); }
     public static boolean automaticArmorCompatibility() { return read(AUTOMATIC_ARMOR_COMPATIBILITY); }

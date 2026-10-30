@@ -19,5 +19,5 @@ public final class NativeSwordCasting {
         finally {DELEGATING.remove();}
     }
     /** Scoped to the scribe block's recognition only; the actual stack and item identity never change. */
-    public static Item scribeItem(ItemStack stack) {return SwordFusion.has(stack)?sword():stack.getItem();}
+    public static Item scribeItem(ItemStack stack) {return SwordFusion.has(stack)?sword():dev.arsfusion.bow.BowFusion.has(stack)?dev.arsfusion.bow.BowFusion.bow():stack.getItem();}
 }

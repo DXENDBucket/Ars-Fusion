@@ -12,6 +12,7 @@ public abstract class SwordTooltipImageMixin {
     @Inject(method="getTooltipImage",at=@At("HEAD"),cancellable=true)
     private void arsFusion$spellImage(CallbackInfoReturnable<Optional<TooltipComponent>> cir) {
         var stack=(ItemStack)(Object)this;
+        if(dev.arsfusion.bow.BowFusion.has(stack))cir.setReturnValue(dev.arsfusion.bow.BowFusion.bow().getTooltipImage(stack));
         if(SwordFusion.has(stack))cir.setReturnValue(NativeSwordCasting.sword().getTooltipImage(stack));
     }
 }

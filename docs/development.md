@@ -77,3 +77,31 @@ Client-only mana HUD opt-in is listed separately in the Mixin configuration. Too
 Targeted GameTests run under ars_fusion_sword and exercise actual anvil consumption, normal and overridden tags, max-stack constraints, caster collision/repeat rejection, attributes/enchantments/durability, persistent/network round trips, names, real scribe-block rewriting/rejection, native casting versus an unfused sword, mana failure and original-tool wear. Test resources intentionally include full tag definitions because same-path resources inside one mod's main/test classpath override rather than merge.
 
 Ars 4's native Enchanter's Sword scribing additionally appends Amplify, whereas the checked Ars 5 version only supplies Touch. This integration preserves each native rule. The scribing test compares the bound tool against an actual unfused native sword rather than imposing one platform's recipe length on the other.
+
+## Bow fusion (0.1.3)
+
+`bow/BowFusion` owns tag-based anvil policy. `BowCasting` scopes the receiving item's real `releaseUsing` with try/finally, snapshots its caster/ammunition, and observes only entities synchronously spawned during that release. After the native release finishes, attachment requires the projectile to be present in the server entity index and owned by the actual shooter. A canceled/no-shot release costs no mana. The original bow retains ammo, spread, damage, enchantments, physical wear and its native projectile type.
+
+`SpellCarryingProjectile` stores a per-instance payload. Entity-level save/load return hooks preserve that payload even when custom Projectile subclasses omit super calls in their own additional-data methods. No client renderer/entity type is added. Payloads use copied native caster data plus original caster UUID; already-prepared contexts are cloned per hit. Reloads reconstruct from the snapshot, and unavailable/dead/cross-dimension casters cannot trigger a continuation.
+
+Native `SpellArrow.modifySpell` handles the augment placement differences between effect Amplify and form Split/Pierce. Only fused bows extend player ammo predicates. Standard arrow Pierce is additive, using the mapped private-method invoker. Split serializes the original registered arrow type, strips UUID/payload, preserves native fields through the native save/load path, and makes extra arrows non-pickup in survival. Every accepted extra must pay; canceled extras cost nothing, unfunded extras are discarded, and the actual funded fan is recentered. Do not substitute a new Ars entity or copy another mod's shooting implementation.
+
+`BowImpacts` observes native ProjectileImpactEvent and successful damage events. It records the direction before the native collision can stop/deflect the arrow. Only damage whose direct source is the projectile and whose victim matches the selected entity can acknowledge that impact; unrelated explosion victims do not duplicate spells. End-of-tick dispatch checks the final impact cancellation state; Forge also checks ImpactResult and final LivingDamageEvent cancellation. Block impacts need no damage acknowledgement. Pending records are cleared on server shutdown; this uses no world/entity scan. Later valid impacts can trigger again without a lifetime target set.
+
+`compat/ConfluxBowCasting` is isolated behind mod presence and uses only public `ActiveCasts` and `ResolverContexts` APIs. It queues the original shot with its existing preparation mechanism, acknowledges accepted spell payloads once per active use for provider cooldowns, and forwards actual incoming direction. No Core source change or hard dependency is introduced. Compile-only Core JARs are external ignored inputs; optional runtime fixtures stay in ignored directories. The native bow scribing recognition, tooltips, naming and mana HUD opt-in share the existing stack-specific sword extension points.
+
+The native Cataclysm Cursed Bow fixture is enabled only with `-PwithCataclysm=true` on NeoForge. It references the existing native test JAR and Lionfish API in the sibling project's ignored libs; neither is packaged or made a production dependency. Tests exercise its real release, native multi-shot Phantom arrow classes, damage/wear and actual impact continuation. Native arrows' tracking/animation visuals still need a client observation.
+
+### Forge annotation-processor outputs
+
+The bow release check exposed an additional incremental-build case: changing only a non-Mixin class (even an unused import) may leave the Mixin processor uninvoked after Gradle cleans its previous mapping outputs. Forge main compileJava therefore disables incremental compilation. Keep all three named AP outputs for build-cache restoration as well. verifyRelease rejects missing mappings, and a preserved-build-directory cache recovery is checked after this wiring changes; do not work around it by shipping a JAR that lacks the refmap.
+
+
+Targeted bow + sword regression commands (PowerShell requires quotes around the comma-separated property):
+
+```powershell
+# NeoForge; Core/Iron coexistence fixture plus the optional native Cursed Bow fixture
+./gradlew.bat runGameTestServer jar sourcesJar '-PgameTestNamespaces=ars_fusion_bow,ars_fusion_sword' -PwithCataclysm=true --offline --console=plain --no-daemon
+# Forge, Java 17, in forge/; optional fixture cases skip without their mods
+./gradlew.bat runGameTestServer jar sourcesJar verifyRelease -PwithoutIron=true '-PgameTestNamespaces=ars_fusion_bow,ars_fusion_sword' --offline --console=plain --no-daemon
+```

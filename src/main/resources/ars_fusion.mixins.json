@@ -9,7 +9,12 @@
     "NativeSwordPhysicalMixin",
     "SwordScribingMixin",
     "FusedSwordCasterMixin",
-    "SwordTooltipImageMixin"
+    "SwordTooltipImageMixin",
+    "FusedBowReleaseMixin",
+    "BowProjectileDataMixin",
+    "BowProjectileSaveMixin",
+    "BowAmmoMixin",
+    "BowArrowAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

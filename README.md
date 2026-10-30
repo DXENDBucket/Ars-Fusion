@@ -2,7 +2,21 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-The first release moves optional armor fusion out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.2**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.3**, common policy, compatibility code and integration checks.
+
+## Enchanter's Bow fusion
+
+Normal anvil: **receiving bow on the left + Enchanter's Bow on the right**, one XP level. `bow_fusion.enabled` defaults to true. The result remains the left item, preserving its own charging, ammunition, enchantments, durability and firing code. Rewrite it on a scribe's table as with an Enchanter's Bow: provide effects/augments, and the native bow supplies Projectile.
+
+The bow's actual projectiles carry the spell. They are not replaced by Ars spell arrows, so native multi-shot, projectile classes, tracking and physical damage remain available. Each accepted projectile pays separately; insufficient mana leaves the original physical arrow intact, without added magic. Creative players do not spend mana. Fusion does not grant infinite arrows or the native Ars bow's ammo-conjuring behavior.
+
+**Ars augment arrows are supported:** Amplify modifies the spell through the native arrow's `modifySpell`; Pierce adds standard arrow piercing; Split creates extra arrows of the original registered type. Split extras pay separately, cannot duplicate survival ammo pickups, and form a centered fan according to the number funded. Native projectile lifecycle overrides can still stop an arrow even if it has standard piercing.
+
+Added spells trigger on uncanceled block impacts, or on living-entity impacts after the original projectile successfully deals damage to that exact target. Canceled/immune hits do not trigger extra spells. A piercing arrow can trigger again on later successful hits; there is no permanent per-victim blacklist. Later secondary projectiles do not inherit payloads merely because they share an owner.
+
+When Conflux **0.1.40+** is installed, its active-use preparation/cooldown API handles the shot, with actual incoming projectile direction retained for continuations. A magic cooldown denial still allows an ordinary physical shot. Conflux remains optional.
+
+Targets use `ars_fusion:bow_fusion_targets` and `ars_fusion:bow_fusion_blacklist`. Defaults allow vanilla bows and optional common/Forge bow tags, including both `c:tools/bow` and `c:tools/bows`. The receiving item must extend `ProjectileWeaponItem`, be nonstackable, and have no existing Ars casting. Crossbows are excluded. Custom bows whose projectiles bypass standard impact/damage events, omit their state from native saves, or spawn only asynchronously may need a dedicated adapter. This is automatic compatibility with standard launch/impact paths, not a guarantee for every custom weapon.
 
 ## Enchanter's Sword fusion
 
@@ -53,6 +67,9 @@ The default attribute blacklist is armor and armor toughness. **Vanilla netherit
 `ars_fusion-server.toml` (NeoForge: `config/`; Forge: world's `serverconfig/`):
 
 ```toml
+[bow_fusion]
+enabled = true
+
 [sword_fusion]
 enabled = true
 

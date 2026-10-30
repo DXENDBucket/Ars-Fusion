@@ -28,6 +28,9 @@ minecraft {
 }
 mixin { add sourceSets.main, 'ars_fusion.refmap.json'; config 'ars_fusion.mixins.json' }
 tasks.named('compileJava') {
+    // MixinGradle removes generated mappings before compilation. An incremental compile
+    // of only non-Mixin classes can skip the processor and silently lose the refmap.
+    options.incremental = false
     outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-refmap.json')).withPropertyName('mixinRefmap')
     outputs.file(layout.buildDirectory.file('tmp/compileJava/ars_fusion.refmap.json')).withPropertyName('packagedMixinRefmap')
     outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-mappings.tsrg')).withPropertyName('mixinMappings')
@@ -38,6 +41,7 @@ dependencies {
         if (providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() && name in ['irons-spells-n-spellbooks','irons-lib','playeranimator']) compileOnly fg.deobf("local:${name}:forge1201")
         else implementation fg.deobf("local:${name}:forge1201")
     }
+    compileOnly fg.deobf('local:ars-conflux:coexist')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:irons-nouveau:coexist')
     if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:ars-conflux:coexist')
@@ -59,6 +63,15 @@ tasks.register('verifyRelease') {
             def target = mappings.mappings?.get('dev/arsfusion/mixin/FusedArmorNameMixin')?.get('getHoverName')
             if (target == null || !target.contains('m_41786_')) throw new GradleException('ItemStack.getHoverName is not mapped to the production target')
             [
+                'dev/arsfusion/mixin/FusedBowReleaseMixin': [
+                    'releaseUsing':'m_41674_',
+                    'Lnet/minecraft/world/item/Item;releaseUsing(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)V':'m_5551_'],
+                'dev/arsfusion/mixin/BowAmmoMixin': [
+                    'getProjectile':'m_6298_',
+                    'Lnet/minecraft/world/item/ProjectileWeaponItem;getSupportedHeldProjectiles()Ljava/util/function/Predicate;':'m_6442_',
+                    'Lnet/minecraft/world/item/ProjectileWeaponItem;getAllSupportedProjectiles()Ljava/util/function/Predicate;':'m_6437_'],
+                'dev/arsfusion/mixin/BowArrowAccessor': ['setPierceLevel':'m_36767_'],
+                'dev/arsfusion/mixin/BowProjectileSaveMixin': ['load':'m_20258_', 'saveWithoutId':'m_20240_'],
                 'dev/arsfusion/mixin/FusedSwordHitMixin': [
                     'hurtEnemy':'m_41640_',
                     'Lnet/minecraft/world/item/Item;hurtEnemy(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z':'m_7579_'],
@@ -72,7 +85,7 @@ tasks.register('verifyRelease') {
                 targets.each { selector, mapped ->
                     def value=mappings.mappings?.get(mixinName)?.get(selector)
                     if(value==null || !value.contains(mapped) || mappings.data?.searge?.get(mixinName)?.get(selector)!=value)
-                        throw new GradleException("Unmapped production sword hook: ${mixinName} ${selector}")
+                        throw new GradleException("Unmapped production casting hook: ${mixinName} ${selector}")
                 }
             }
             def manifest = zip.getInputStream(zip.getEntry('META-INF/MANIFEST.MF')).withCloseable { stream -> new java.util.jar.Manifest(stream) }

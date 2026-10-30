@@ -25,6 +25,7 @@ public final class SwordPlatform {
                 .setColor(from.getColor()).setSound(from.getCurrentSound()).setHidden(from.isSpellHidden()).setHiddenRecipe(from.getHiddenRecipe()).saveToStack(result);
     }
     public static void tooltip(ItemTooltipEvent event) {
+        if(dev.arsfusion.bow.BowFusion.has(event.getItemStack()))dev.arsfusion.bow.BowFusion.bow().getInformation(event.getItemStack(),event.getContext(),event.getToolTip(),event.getFlags());
         if(SwordFusion.has(event.getItemStack()))NativeSwordCasting.sword().getInformation(event.getItemStack(),event.getContext(),event.getToolTip(),event.getFlags());
     }
 }

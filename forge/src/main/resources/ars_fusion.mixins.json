@@ -7,7 +7,12 @@
     "FusedArmorNameMixin",
     "FusedSwordHitMixin",
     "NativeSwordPhysicalMixin",
-    "SwordScribingMixin"
+    "SwordScribingMixin",
+    "FusedBowReleaseMixin",
+    "BowProjectileDataMixin",
+    "BowProjectileSaveMixin",
+    "BowAmmoMixin",
+    "BowArrowAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

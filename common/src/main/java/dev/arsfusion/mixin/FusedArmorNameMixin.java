@@ -15,6 +15,7 @@ public abstract class FusedArmorNameMixin {
         var original=cir.getReturnValue();
         var name=ArmorFusion.name((ItemStack)(Object)this,original);
         name=dev.arsfusion.sword.SwordFusion.name((ItemStack)(Object)this,name);
+        name=dev.arsfusion.bow.BowFusion.name((ItemStack)(Object)this,name);
         if(name!=original)cir.setReturnValue(name);
     }
 }

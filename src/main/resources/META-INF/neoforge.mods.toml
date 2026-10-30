@@ -44,3 +44,10 @@ type="optional"
 versionRange="[0.17.32,)"
 ordering="AFTER"
 side="BOTH"
+
+[[dependencies.ars_fusion]]
+modId="ars_conflux"
+type="optional"
+versionRange="[0.1.40,)"
+ordering="AFTER"
+side="BOTH"

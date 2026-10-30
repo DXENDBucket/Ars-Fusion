@@ -24,7 +24,9 @@ neoForge {
     mods { ars_fusion { sourceSet sourceSets.main; sourceSet sourceSets.gameTest } }
 }
 dependencies {
+    if (providers.gradleProperty('withCataclysm').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: '../Cataclysm-Nouveau/libs', include: ["L_Ender's Cataclysm*.jar", 'lionfishapi*.jar'])
     compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compileOnly fileTree(dir: 'libs/coexist', include: '*conflux*.jar')
     runtimeOnly fileTree(dir: 'libs', include: '*.jar', excludes: providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? ['iron.jar','irons-lib.jar','player-animation.jar'] : [])
     if (!providers.gradleProperty('withoutIron').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: 'libs/coexist', include: '*.jar')
 }
