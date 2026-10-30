@@ -17,7 +17,7 @@ neoForge {
         gameTestServer {
             type = 'gameTestServer'
             gameDirectory = file(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'run/no-iron' : 'run/gametest')
-            systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron'
+            systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('gameTestNamespaces').getOrElse(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron')
             jvmArgument '-Xmx1000m'
         }
     }

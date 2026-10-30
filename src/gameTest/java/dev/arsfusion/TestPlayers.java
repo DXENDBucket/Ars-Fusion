@@ -9,7 +9,7 @@ import net.minecraft.world.level.GameType;
 import java.util.UUID;
 public final class TestPlayers {
     static ServerPlayer player(GameTestHelper h) {
-        io.redspace.ironsspellbooks.api.config.SpellConfigManager.onDatapackSync(
+        if(dev.arsfusion.platform.FusionPlatform.ironLoaded())io.redspace.ironsspellbooks.api.config.SpellConfigManager.onDatapackSync(
                 new net.neoforged.neoforge.event.OnDatapackSyncEvent(h.getLevel().getServer().getPlayerList(), null));
         var cookie = CommonListenerCookie.createInitial(new com.mojang.authlib.GameProfile(UUID.randomUUID(), "ScrollStudent"), false);
         var player = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation());

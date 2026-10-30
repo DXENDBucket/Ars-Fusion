@@ -63,3 +63,17 @@ New tests cover an unregistered vanilla armor item with custom modifiers and a w
 ### Attribute ownership
 
 Manual compatibility does not own a second attribute path. IronArmor only recognizes its supported donor, initializes a native spell container on the donor snapshot, and copies that container to the Ars result. Both dedicated and automatic donors then use the same platform attribute event handler and shared blacklist policy. Automatic compatibility controls eligibility of unregistered donors, not whether registered donors receive attributes. Force-auto skips manual preparation/data transfer while keeping that common attribute path.
+
+## Sword fusion (0.1.2)
+
+Shared policy is in sword/SwordFusion; platforms own native caster serialization and the marker (immutable boolean component on NeoForge, owned NBT key on Forge). Spell data uses native Ars storage. Anvil output remains a copy of the receiving item; only the sword marker and current spell metadata are added.
+
+FusedSwordHitMixin injects at ItemStack's native item hit callback, before receiving-item wear. NativeSwordCasting invokes the actual registered EnchantersSword.hurtEnemy with the actual tool/attacker/target; optional Conflux's existing native-sword hook is thereby reused without a hard dependency. NativeSwordPhysicalMixin suppresses the delegated call's final SwordItem fallback only within the thread-local scope. The original ItemStack callback then proceeds normally. This retains last-durability hit timing and leaves native unfused swords unchanged.
+
+Scribe recognition is deliberately scoped to ItemStack.getItem calls within the native ScribesBlock interaction. Only fused stacks appear as the native sword to those recognition checks; the stack passed to native onScribe and its item identity remain original. No broad Item interface mixin is introduced. Original table events, multipart dispatch, validation, implicit Touch insertion and synchronization are retained.
+
+Client-only mana HUD opt-in is listed separately in the Mixin configuration. Tooltips delegate native spell information; Ars 5 also supplies the native glyph tooltip image and stack-specific hasCaster recognition. Existing right-click interactions and physical attributes stay with the original item.
+
+Targeted GameTests run under ars_fusion_sword and exercise actual anvil consumption, normal and overridden tags, max-stack constraints, caster collision/repeat rejection, attributes/enchantments/durability, persistent/network round trips, names, real scribe-block rewriting/rejection, native casting versus an unfused sword, mana failure and original-tool wear. Test resources intentionally include full tag definitions because same-path resources inside one mod's main/test classpath override rather than merge.
+
+Ars 4's native Enchanter's Sword scribing additionally appends Amplify, whereas the checked Ars 5 version only supplies Touch. This integration preserves each native rule. The scribing test compares the bound tool against an actual unfused native sword rather than imposing one platform's recipe length on the other.

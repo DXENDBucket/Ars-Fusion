@@ -11,7 +11,7 @@ import net.minecraftforge.gametest.*;
 public final class TestPlayers {
     static net.minecraft.server.level.ServerPlayer player(GameTestHelper h) {
         var world = h.getLevel(); var server = world.getServer();
-        io.redspace.ironsspellbooks.api.config.SpellConfigManager.onDatapackSync(new net.minecraftforge.event.OnDatapackSyncEvent(server.getPlayerList(), null));
+        if(dev.arsfusion.platform.FusionPlatform.ironLoaded())io.redspace.ironsspellbooks.api.config.SpellConfigManager.onDatapackSync(new net.minecraftforge.event.OnDatapackSyncEvent(server.getPlayerList(), null));
         var player = new net.minecraft.server.level.ServerPlayer(server, world,
             new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "ForgeStudent")) {
                 @Override public void displayClientMessage(net.minecraft.network.chat.Component message, boolean actionBar) { System.out.println("TEST MESSAGE: " + message.getString()); }
@@ -25,8 +25,8 @@ public final class TestPlayers {
         player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(1, 3, 1)));
         player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
         CapabilityRegistry.getMana(player).ifPresent(m -> { m.setMaxMana(1000); m.setMana(1000); });
-        player.getAttribute(io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA.get()).setBaseValue(10000);
-        io.redspace.ironsspellbooks.api.magic.MagicData.getPlayerMagicData(player).setMana(1000);
+        if(dev.arsfusion.platform.FusionPlatform.ironLoaded())player.getAttribute(io.redspace.ironsspellbooks.api.registry.AttributeRegistry.MAX_MANA.get()).setBaseValue(10000);
+        if(dev.arsfusion.platform.FusionPlatform.ironLoaded())io.redspace.ironsspellbooks.api.magic.MagicData.getPlayerMagicData(player).setMana(1000);
         return player;
     }
 }

@@ -2,7 +2,23 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-The first release moves optional armor fusion out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.1**, common policy, compatibility code and integration checks.
+The first release moves optional armor fusion out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.2**, common policy, compatibility code and integration checks.
+
+## Enchanter's Sword fusion
+
+Use a normal anvil: **receiving weapon/tool on the left + Enchanter's Sword on the right**, consuming both inputs and one XP level. Enabled by default through `sword_fusion.enabled`.
+
+The result stays the left item, retaining its appearance, damage, speed, enchantments, durability and ordinary interactions. It receives the sword's current spell and native scribe-table rewriting ability. Successful melee hits use the native sword casting path, with the real wielder and actual receiving tool. Existing Conflux hooks on Enchanter's Sword therefore still apply when installed; Conflux remains optional. Only the original receiving item's melee durability behavior runs.
+
+Default names are `Enchanter's Diamond Sword` / `巫师之钻石剑` (and equivalent original names for other tools). Explicit anvil/custom names take precedence.
+
+Eligibility is stack-specific:
+
+- `ars_fusion:spell_fusion_targets` allows swords, axes, pickaxes, shovels and hoes by default. Datapacks may add mod weapons or other tools without requiring SwordItem inheritance or durability.
+- `ars_fusion:spell_fusion_blacklist` takes precedence; defaults exclude bow, crossbow and shield. Ranged weapons and shields are reserved for their respective Ars equipment integrations.
+- Maximum stack size and input count must both be one. Existing Ars casting data/providers and already-bound items are rejected.
+
+Put the bound tool on a scribe's table and sneak-use the source spellbook/parchment, as with a native Enchanter's Sword. It remains a single sword-style binding: write effects/augments without a form, and the sword supplies Touch. It does not become a multi-slot spellbook or gain a right-click casting action. Mana HUD and native spell tooltip information recognize the binding. Disabling new fusion or changing eligibility tags does not strip existing bindings.
 
 ## Armor fusion
 
@@ -37,6 +53,9 @@ The default attribute blacklist is armor and armor toughness. **Vanilla netherit
 `ars_fusion-server.toml` (NeoForge: `config/`; Forge: world's `serverconfig/`):
 
 ```toml
+[sword_fusion]
+enabled = true
+
 [armor_fusion]
 enabled = true
 automatic_compatibility = true
@@ -58,8 +77,8 @@ The 万法归一 pack enables tier toughness as well. Pack authors should config
 - Old `irons_nouveau:armor_fusion` components / NBT remain readable. NeoForge registers the historical codec only when its former owner is absent. New fusions use `ars_fusion:armor_fusion`.
 - Iron & Nouveau 0.17.32 retains old-item behavior on its own and hands off to Ars Fusion when installed. Its historical creation/toughness settings no longer enable the migrated features.
 
-Ars Fusion ships no copied Iron or Ars art assets and no original mod JARs. Its only visual change is the combined armor name; armor keeps Ars rendering.
+Ars Fusion ships no copied Iron or Ars art assets and no original mod JARs. Fused equipment retains the receiver's native rendering; default names and spell information are added.
 
 ## Development
 
-See [building and verification](docs/development.md). Shared policy and optional Iron adapter live in `common/`; components/NBT, events and configuration live in the platform source trees. Future weapon fusion is outside the first release.
+See [building and verification](docs/development.md). Shared policy and optional Iron adapter live in `common/`; components/NBT, events and configuration live in the platform source trees. Sword-style binding is separate from armor donor attributes; no sword damage, attack speed, enchantments or other donor numeric bonuses are copied.

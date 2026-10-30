@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.2
+
+- Add default-on Enchanter's Sword anvil fusion onto tagged, nonstackable melee weapons/mining tools. Preserve left-item identity and physical properties; copy only the current native spell/casting layer.
+- Support native scribe-table rewriting and native hit casting, including optional Conflux checks, with a scoped guard against duplicate donor durability.
+- Add allow/exclusion tags, reject existing Ars casters and repeated bindings, and keep bows/crossbows/shields excluded by default.
+- Add Enchanter's / 巫师之 naming, native spell tooltip information and mana HUD recognition. Custom names retain priority.
+- Verify production Forge mappings for hit dispatch, scribe recognition and native physical fallback hooks.
+
 ## 0.1.1
 
 - Enable armor fusion by default; keep additional tier toughness opt-in.

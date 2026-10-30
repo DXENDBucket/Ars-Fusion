@@ -4,9 +4,17 @@
   "package": "dev.arsfusion.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "FusedArmorNameMixin"
+    "FusedArmorNameMixin",
+    "FusedSwordHitMixin",
+    "NativeSwordPhysicalMixin",
+    "SwordScribingMixin",
+    "FusedSwordCasterMixin",
+    "SwordTooltipImageMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "SwordManaHudMixin"
+  ]
 }

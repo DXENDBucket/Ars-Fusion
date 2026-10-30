@@ -19,7 +19,7 @@ minecraft {
         }
         gameTestServer {
             workingDirectory project.file(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'run/no-iron' : 'run/gametest')
-            property 'forge.enabledGameTestNamespaces', providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron'
+            property 'forge.enabledGameTestNamespaces', providers.gradleProperty('gameTestNamespaces').getOrElse(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron')
             jvmArgs '-Xmx1000m'
             mods { ars_fusion { source sourceSets.main; source sourceSets.forgeTest } }
         }
@@ -28,9 +28,9 @@ minecraft {
 }
 mixin { add sourceSets.main, 'ars_fusion.refmap.json'; config 'ars_fusion.mixins.json' }
 tasks.named('compileJava') {
-    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-refmap.json'))
-    outputs.file(layout.buildDirectory.file('tmp/compileJava/ars_fusion.refmap.json'))
-    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-mappings.tsrg'))
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-refmap.json')).withPropertyName('mixinRefmap')
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/ars_fusion.refmap.json')).withPropertyName('packagedMixinRefmap')
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-mappings.tsrg')).withPropertyName('mixinMappings')
 }
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
@@ -58,6 +58,23 @@ tasks.register('verifyRelease') {
             def mappings = zip.getInputStream(entry).withCloseable { stream -> new groovy.json.JsonSlurper().parse(stream) }
             def target = mappings.mappings?.get('dev/arsfusion/mixin/FusedArmorNameMixin')?.get('getHoverName')
             if (target == null || !target.contains('m_41786_')) throw new GradleException('ItemStack.getHoverName is not mapped to the production target')
+            [
+                'dev/arsfusion/mixin/FusedSwordHitMixin': [
+                    'hurtEnemy':'m_41640_',
+                    'Lnet/minecraft/world/item/Item;hurtEnemy(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z':'m_7579_'],
+                'dev/arsfusion/mixin/NativeSwordPhysicalMixin': [
+                    'hurtEnemy':'m_7579_',
+                    'Lnet/minecraft/world/item/SwordItem;hurtEnemy(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/LivingEntity;)Z':'m_7579_'],
+                'dev/arsfusion/mixin/SwordScribingMixin': [
+                    'use':'m_6227_',
+                    'Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;':'m_41720_']
+            ].each { mixinName, targets ->
+                targets.each { selector, mapped ->
+                    def value=mappings.mappings?.get(mixinName)?.get(selector)
+                    if(value==null || !value.contains(mapped) || mappings.data?.searge?.get(mixinName)?.get(selector)!=value)
+                        throw new GradleException("Unmapped production sword hook: ${mixinName} ${selector}")
+                }
+            }
             def manifest = zip.getInputStream(zip.getEntry('META-INF/MANIFEST.MF')).withCloseable { stream -> new java.util.jar.Manifest(stream) }
             if (manifest.mainAttributes.getValue('MixinConfigs') != 'ars_fusion.mixins.json') throw new GradleException('Missing MixinConfigs manifest')
         }

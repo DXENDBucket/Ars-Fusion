@@ -9,3 +9,13 @@ Coverage: native anvil consumption/policies, native Iron arcane-anvil infusion, 
 Full graphical client testing was not repeated. Armor appearance remains native Ars; no custom armor renderer or copied donor art is added. The 万法归一 deployment uses the NeoForge JAR and explicitly enables tier toughness in addition to the default-on fusion/automatic compatibility.
 
 Production artifacts contain only this project's classes/resources and its license; native mod JARs are not bundled. Iron and Conflux are present only in the NeoForge coexistence fixture, not declared hard requirements of Ars Fusion.
+
+
+# Verification: 0.1.2 sword fusion (2026-10-30)
+
+- NeoForge 1.21.1 with Iron & Nouveau 0.17.32 and Conflux 0.1.40: **3 targeted sword GameTests passed**.
+- Forge 1.20.1 without Iron or Conflux: **3 targeted sword GameTests passed**. Actual native scribing is compared to an unfused native sword, preserving Ars 4's additional implicit Amplify.
+- Checks cover tag-defined mining tools and a non-SwordItem addition, blacklist precedence, maximum stack size, existing caster collisions, actual anvil consumption, original attributes/enchantments/durability, persistent/network data, custom/default names, native scribe-block rewriting and invalid-form rejection, actual native magic damage and mana use, empty-mana failure, and exactly the original physical tool wear.
+- Production Forge refmap checks include the enclosing item-hit, sword-hit and scribe-use methods and all Minecraft invocation selectors. Named annotation-processor outputs were added. The generated build directory was preserved under ignored .gradle cache-verification storage, then a fresh build restored compileJava FROM-CACHE and passed verifyRelease with the refmap present.
+- The installed Ars Nouveau 5.13.3 JAR was additionally checked: native sword dispatch/physical fallback and component-based caster fallback match the adapter's targets. Development integration tests use the documented 5.13.1 dependency.
+- GUI rendering, mana HUD appearance and native tooltip image have not been manually checked in a graphical client. No donor art or model is copied; item identity/rendering remains the receiver's.

@@ -41,15 +41,18 @@ public final class FusionPlatform {
     public static int tier(ItemStack stack){var perks=PerkUtil.getPerkHolder(stack);return perks==null?0:perks.getTier()+1;}
     public static void register(IEventBus bus) {
         dev.arsfusion.api.ArmorDonors.installDefaults();
+        SwordPlatform.register(bus);
         TYPES.register(bus);
         if(!net.neoforged.fml.ModList.get().isLoaded("irons_nouveau")) {
             LEGACY.register("armor_fusion",()->DataComponentType.<ItemContainerContents>builder().persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC).build());
             LEGACY.register(bus);
         }
-        NeoForge.EVENT_BUS.addListener(FusionPlatform::anvil);NeoForge.EVENT_BUS.addListener(FusionPlatform::attributes);
+        NeoForge.EVENT_BUS.addListener(FusionPlatform::anvil);NeoForge.EVENT_BUS.addListener(FusionPlatform::attributes);NeoForge.EVENT_BUS.addListener(SwordPlatform::tooltip);
     }
     private static void anvil(AnvilUpdateEvent event) {
-        var output=ArmorFusion.fuse(event.getLeft(),event.getRight());if(output.isEmpty())return;
+        var output=ArmorFusion.fuse(event.getLeft(),event.getRight());
+        if(output.isEmpty())output=dev.arsfusion.sword.SwordFusion.fuse(event.getLeft(),event.getRight());
+        if(output.isEmpty())return;
         String name=event.getName();
         if(name!=null&&!name.isBlank()&&!name.equals(event.getLeft().getHoverName().getString()))output.set(DataComponents.CUSTOM_NAME,Component.literal(name));
         event.setOutput(output);event.setCost(1);event.setMaterialCost(1);

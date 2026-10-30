@@ -9,6 +9,7 @@ import java.util.HashSet;
 /** Server policy is synchronized to clients. Crafting toggles never erase fused data. */
 public final class FusionConfig {
     public static final ModConfigSpec SPEC;
+    public static final ModConfigSpec.BooleanValue SWORD_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue ARMOR_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue AUTOMATIC_ARMOR_COMPATIBILITY;
     public static final ModConfigSpec.BooleanValue DISABLE_MANUAL_COMPATIBILITY;
@@ -20,6 +21,12 @@ public final class FusionConfig {
 
     static {
         var builder = new ModConfigSpec.Builder();
+        builder.push("sword_fusion");
+        SWORD_FUSION_ENABLED=builder.comment("Allow one anvil fusion: receiving tool on the left, Enchanter's Sword on the right, for one XP level.",
+                "Targets use spell_fusion_targets and spell_fusion_blacklist item tags; max stack size must be one and existing Ars casting is rejected.",
+                "Only native casting data/behavior is added. Does not copy donor damage, speed, durability or enchantments. Existing bindings survive disabling crafting.")
+                .define("enabled",true);
+        builder.pop();
         builder.push("armor_fusion");
         ARMOR_FUSION_ENABLED = builder.comment("Enable vanilla-anvil fusion: left Ars armor + right same-slot donor armor, for one XP level. Enabled by default.",
                 "Keeps Ars appearance, threads, upgrades, durability and enchantments. Existing fused equipment retains its data when crafting is disabled.")
@@ -54,6 +61,7 @@ public final class FusionConfig {
     private static boolean validAttribute(Object value) {
         return value instanceof String id && ResourceLocation.tryParse(id) != null;
     }
+    public static boolean swordFusionEnabled() {return read(SWORD_FUSION_ENABLED);}
     public static boolean armorFusionEnabled() { return read(ARMOR_FUSION_ENABLED); }
     public static boolean automaticArmorCompatibility() { return read(AUTOMATIC_ARMOR_COMPATIBILITY); }
     public static boolean automaticOnly() {

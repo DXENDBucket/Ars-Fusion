@@ -11,3 +11,7 @@ Read README.md and docs/development.md before editing. The shared local workflow
 - Batch relevant checks. Build Forge production refmap and reobfuscated JAR; do not deploy development JARs. No remote publishing or pushes without user authorization.
 
 - Explicit adapters use api/ArmorFusionAdapter and api/ArmorDonors. They take priority over generic attribute transfer. Force-auto only bypasses them during new fusion and only with master+auto enabled. Do not strip stored native casting data when a crafting policy changes.
+
+- Sword-style fusion is a separate casting layer; never copy donor weapon modifiers or install caster/scribe interfaces on every Item. Use per-stack markers and the scoped scribe recognition redirect.
+- Keep native Enchanter's Sword as the executor so optional Conflux hooks are naturally honored. NativeSwordCasting's thread-local scope suppresses only the delegated SwordItem physical fallback; the original receiving item owns its normal hit/wear behavior. Always clear scope in finally.
+- Default targets are swords/axes/pickaxes/shovels/hoes via tags, max stack size one, blacklist takes precedence, and existing Ars casting is never overwritten. No right-click casting, bow/crossbow/shield behavior, donor discount or numeric weapon properties are implied.
