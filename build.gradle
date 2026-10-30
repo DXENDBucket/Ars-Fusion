@@ -1,0 +1,34 @@
+plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.146' }
+group = 'dev.arsfusion'
+version = file('VERSION').text.trim()
+base { archivesName = 'ars-fusion' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+repositories { mavenCentral() }
+sourceSets {
+    main { java.srcDir 'common/src/main/java'; resources.srcDir 'common/src/main/resources' }
+    gameTest { java.srcDir 'common/src/gameTest/java'; compileClasspath += sourceSets.main.output; runtimeClasspath += sourceSets.main.output }
+}
+configurations { gameTestImplementation.extendsFrom implementation; gameTestCompileOnly.extendsFrom compileOnly; gameTestRuntimeOnly.extendsFrom runtimeOnly }
+neoForge {
+    version = '21.1.250'
+    addModdingDependenciesTo sourceSets.gameTest
+    runs {
+        client { client() }
+        gameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'run/no-iron' : 'run/gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron'
+            jvmArgument '-Xmx1000m'
+        }
+    }
+    mods { ars_fusion { sourceSet sourceSets.main; sourceSet sourceSets.gameTest } }
+}
+dependencies {
+    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    runtimeOnly fileTree(dir: 'libs', include: '*.jar', excludes: providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? ['iron.jar','irons-lib.jar','player-animation.jar'] : [])
+    if (!providers.gradleProperty('withoutIron').getOrElse('false').toBoolean()) runtimeOnly fileTree(dir: 'libs/coexist', include: '*.jar')
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+processResources { inputs.property 'version', project.version; filesMatching('META-INF/neoforge.mods.toml') { expand(version: project.version) } }
+tasks.named('jar') { from('LICENSE'); archiveFileName = "ars-fusion-${project.version}-mc1.21.1-neoforge.jar" }
+tasks.named('sourcesJar') { from('LICENSE') }

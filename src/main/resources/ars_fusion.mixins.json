@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.arsfusion.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "FusedArmorNameMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

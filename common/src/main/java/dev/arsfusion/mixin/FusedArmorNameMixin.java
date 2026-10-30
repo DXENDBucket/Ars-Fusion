@@ -1,0 +1,19 @@
+package dev.arsfusion.mixin;
+
+import dev.arsfusion.armor.ArmorFusion;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(ItemStack.class)
+public abstract class FusedArmorNameMixin {
+    @Inject(method="getHoverName",at=@At("RETURN"),cancellable=true)
+    private void arsFusion$fusionName(CallbackInfoReturnable<Component> cir) {
+        var original=cir.getReturnValue();
+        var name=ArmorFusion.name((ItemStack)(Object)this,original);
+        if(name!=original)cir.setReturnValue(name);
+    }
+}

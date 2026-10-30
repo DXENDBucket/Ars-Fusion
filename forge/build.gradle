@@ -1,0 +1,65 @@
+plugins { id 'java-library'; id 'net.minecraftforge.gradle' version '6.0.36'; id 'org.spongepowered.mixin' version '0.7.38' }
+group = 'dev.arsfusion'
+version = file('../VERSION').text.trim()
+base { archivesName = 'ars-fusion' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(17); withSourcesJar() }
+repositories { flatDir { dirs 'libs' }; mavenCentral { content { excludeGroup 'local' } } }
+sourceSets {
+    main { java.srcDir '../common/src/main/java'; resources.srcDir '../common/src/main/resources' }
+    forgeTest { java.srcDir '../common/src/gameTest/java'; compileClasspath += sourceSets.main.output; runtimeClasspath += sourceSets.main.output }
+}
+configurations { forgeTestImplementation.extendsFrom implementation; forgeTestCompileOnly.extendsFrom compileOnly; forgeTestRuntimeOnly.extendsFrom runtimeOnly }
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        configureEach {
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        }
+        gameTestServer {
+            workingDirectory project.file(providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'run/no-iron' : 'run/gametest')
+            property 'forge.enabledGameTestNamespaces', providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() ? 'ars_fusion' : 'ars_fusion,ars_fusion_iron'
+            jvmArgs '-Xmx1000m'
+            mods { ars_fusion { source sourceSets.main; source sourceSets.forgeTest } }
+        }
+        client { workingDirectory project.file('run/client'); mods { ars_fusion { source sourceSets.main } } }
+    }
+}
+mixin { add sourceSets.main, 'ars_fusion.refmap.json'; config 'ars_fusion.mixins.json' }
+tasks.named('compileJava') {
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-refmap.json'))
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/ars_fusion.refmap.json'))
+    outputs.file(layout.buildDirectory.file('tmp/compileJava/compileJava-mappings.tsrg'))
+}
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
+    for (name in ['ars-nouveau','irons-spells-n-spellbooks','geckolib','curios','patchouli','playeranimator','irons-lib','jei']) {
+        if (providers.gradleProperty('withoutIron').getOrElse('false').toBoolean() && name in ['irons-spells-n-spellbooks','irons-lib','playeranimator']) compileOnly fg.deobf("local:${name}:forge1201")
+        else implementation fg.deobf("local:${name}:forge1201")
+    }
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:irons-nouveau:coexist')
+    if (providers.gradleProperty('coexist').getOrElse('false').toBoolean()) runtimeOnly fg.deobf('local:ars-conflux:coexist')
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+processResources { inputs.property 'version', project.version; filesMatching('META-INF/mods.toml') { expand(version: project.version) } }
+tasks.named('jar') { from('../LICENSE'); archiveFileName = "ars-fusion-${project.version}-mc1.20.1-forge.jar"; manifest { attributes 'MixinConfigs': 'ars_fusion.mixins.json' }; finalizedBy 'reobfJar' }
+tasks.named('sourcesJar') { from('../LICENSE') }
+
+// Forge release checks run against the reobfuscated archive, not the development classes.
+tasks.register('verifyRelease') {
+    dependsOn 'reobfJar'
+    doLast {
+        def archive = tasks.named('jar').get().archiveFile.get().asFile
+        new java.util.zip.ZipFile(archive).withCloseable { zip ->
+            def entry = zip.getEntry('ars_fusion.refmap.json')
+            if (entry == null || zip.getEntry('LICENSE') == null) throw new GradleException('Missing release refmap or MIT license')
+            def mappings = zip.getInputStream(entry).withCloseable { stream -> new groovy.json.JsonSlurper().parse(stream) }
+            def target = mappings.mappings?.get('dev/arsfusion/mixin/FusedArmorNameMixin')?.get('getHoverName')
+            if (target == null || !target.contains('m_41786_')) throw new GradleException('ItemStack.getHoverName is not mapped to the production target')
+            def manifest = zip.getInputStream(zip.getEntry('META-INF/MANIFEST.MF')).withCloseable { stream -> new java.util.jar.Manifest(stream) }
+            if (manifest.mainAttributes.getValue('MixinConfigs') != 'ars_fusion.mixins.json') throw new GradleException('Missing MixinConfigs manifest')
+        }
+    }
+}
