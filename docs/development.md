@@ -2,6 +2,8 @@
 
 ## Layout
 
+- Reverse armor fusion (0.1.7): shared policy is `armor/ReverseArmorFusion`; platform `ReverseArmorPlatform` owns native thread data and slot lookup. See [reverse fusion](reverse-armor-fusion.md) for the native component/NBT split and verification boundaries. Never route reverse results through forward donor attribute transfer.
+
 - `common/src/main/java/dev/arsfusion/armor/ArmorFusion.java`: fusion policy, item identity, donor validation, naming and tier toughness.
 - `common/src/main/java/dev/arsfusion/compat/IronArmor.java`: the armor-specific class linking Iron APIs. Native preset initialization and spell-container copying stay here.
 - `src/main/java/.../platform/FusionPlatform.java`: NeoForge immutable components, historical codec ownership, anvil and attribute events.

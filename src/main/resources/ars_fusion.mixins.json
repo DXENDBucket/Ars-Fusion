@@ -18,7 +18,8 @@
     "FusedCrossbowUseMixin",
     "FusedShieldBlockMixin",
     "FusedShieldRepairMixin",
-    "OptionalGoetyCasterMixin"
+    "OptionalGoetyCasterMixin",
+    "ReverseArmorSlotsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,5 +2,6 @@
   "item.ars_fusion.fused_armor": "%s–%s Fused Armor",
   "item.ars_fusion.enchanters_tool": "Enchanter's %s",
   "tooltip.ars_fusion.shield_utility": "Blocking grants Mana Regeneration and Spell Damage; repairs over time using mana.",
-  "item.ars_fusion.fused_caster": "%s–%s Fused Caster"
+  "item.ars_fusion.fused_caster": "%s–%s Fused Caster",
+  "tooltip.ars_fusion.thread_tier": "Thread tier: %s"
 }

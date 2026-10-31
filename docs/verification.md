@@ -72,3 +72,8 @@ Core tracked files remain unchanged at 6af5a278122da13766c3d0a1dfcc30d2a94a63e0.
 - Native SpellBow, SpellCrossbow, EnchantersShield, Wand and EnchantersMirror class implementations in the checked Ars JARs do not add comparable permanent spell-damage attributes. Their discount/conditional-utility mechanisms are separate.
 - Final binary/source JARs passed MIT/no-native-assets/no-native-JAR/test-class audits. No Mixin selectors or AP output wiring changed. The NeoForge release was rebuilt after config-comment updates without repeating gameplay checks.
 - No graphical client was started. Release files and logs are staged in MinecraftDev/releases/ars-fusion-20261030/0.1.6-sword-bonus/manifest.json. Core tracked files remain unchanged at ca21d6e31f44928841cdb5594fc594ea85497371.
+
+
+## 0.1.7 reverse armor fusion
+
+NeoForge main + compileGameTestJava + jar + sourcesJar passed. Forge main + compileForgeTestJava + jar/reobfJar + sourcesJar + verifyRelease passed. Two new native-path regression cases per platform cover the anvil, native upgrade/storage codecs, isolation from native armor base stats and the alteration tile; these cases were **compiled only**, not executed. No client/server/GameTest process was launched for this batch. Renderer bytecode was checked to use PerkUtil and standard ArmorItem rendering; actual client visuals remain unverified. Full behavior and limits: [reverse armor](reverse-armor-fusion.md). Build fingerprints: [0.1.7](reverse-armor-0.1.7-build.json).

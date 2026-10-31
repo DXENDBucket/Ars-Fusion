@@ -20,6 +20,7 @@ public final class FusionConfig {
     public static final ModConfigSpec.BooleanValue SHIELD_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue BOW_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue ARMOR_FUSION_ENABLED;
+    public static final ModConfigSpec.BooleanValue REVERSE_ARMOR_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue AUTOMATIC_ARMOR_COMPATIBILITY;
     public static final ModConfigSpec.BooleanValue DISABLE_MANUAL_COMPATIBILITY;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ATTRIBUTE_BLACKLIST;
@@ -60,6 +61,9 @@ public final class FusionConfig {
         ARMOR_FUSION_ENABLED = builder.comment("Enable vanilla-anvil fusion: left Ars armor + right same-slot donor armor, for one XP level. Enabled by default.",
                 "Keeps Ars appearance, threads, upgrades, durability and enchantments. Existing fused equipment retains its data when crafting is disabled.")
                 .define("enabled", true);
+        REVERSE_ARMOR_FUSION_ENABLED = builder.comment("Allow reversed armor fusion: other armor on the left + same-slot Ars armor on the right.",
+                "Transfers only native thread slots, their upgrade tier and installed threads. Keeps the receiver item and its own abilities. Requires enabled.")
+                .define("reverse_enabled", true);
         AUTOMATIC_ARMOR_COMPATIBILITY = builder.comment("Allow other non-Ars ArmorItem armor as donors when no manual adapter matches. Enabled by default.",
                 "Only copies item Attribute Modifiers for the matching slot, filtered by attribute_blacklist.",
                 "Does not copy capabilities, special passives, enchantments or spell containers. Manual adapters such as Iron remain available when this is false.")
@@ -73,7 +77,7 @@ public final class FusionConfig {
                 "Unknown valid IDs are harmless; an empty list allows every donor modifier. Re-equip after changing at runtime.")
                 .defineListAllowEmpty("attribute_blacklist", () -> List.of("minecraft:generic.armor", "minecraft:generic.armor_toughness"), () -> "minecraft:generic.armor", FusionConfig::validAttribute);
         builder.pop().push("ars_armor_toughness");
-        TOUGHNESS_ENABLED = builder.comment("Add toughness to all Ars-perk armor, fused or not. Disabled by default.")
+        TOUGHNESS_ENABLED = builder.comment("Add toughness to native Ars armor, with or without forward fusion. Reverse fusion does not copy this base armor bonus. Disabled by default.")
                 .define("enabled", false);
         ARS_ARMOR_TOUGHNESS_PER_TIER = builder.comment("Extra toughness per piece = armor upgrade tier * this value.",
                 "All three native armor sets separately progress through tiers 1/2/3; does not use the armor style or an individual thread/slot level.",
@@ -108,6 +112,7 @@ public final class FusionConfig {
     public static boolean bowFusionEnabled() {return read(BOW_FUSION_ENABLED);}
     public static boolean swordFusionEnabled() {return read(SWORD_FUSION_ENABLED);}
     public static boolean armorFusionEnabled() { return read(ARMOR_FUSION_ENABLED); }
+    public static boolean reverseArmorFusionEnabled() { return read(REVERSE_ARMOR_FUSION_ENABLED); }
     public static boolean automaticArmorCompatibility() { return read(AUTOMATIC_ARMOR_COMPATIBILITY); }
     public static boolean automaticOnly() {
         return armorFusionEnabled() && automaticArmorCompatibility() && read(DISABLE_MANUAL_COMPATIBILITY);

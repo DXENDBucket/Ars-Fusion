@@ -2,7 +2,7 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.6**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.7**, common policy, compatibility code and integration checks.
 
 ## Staff attributes on Ars casting equipment
 
@@ -74,6 +74,16 @@ The result remains the original Ars armor. Its appearance, dye, enchantments, du
 
 Turning fusion off prevents new fusions; existing equipment retains its data and bonuses.
 
+## Reverse armor fusion
+
+Normal anvil: **other armor on the left + same-slot Ars armor on the right**, one XP level. Enabled by default through `armor_fusion.reverse_enabled`, under the master `armor_fusion.enabled` switch. This direction does not depend on the forward donor attribute blacklist or automatic-compatibility setting.
+
+The result stays the left armor, preserving its rendering, physical attributes, damage, enchantments, components and native abilities. The right item contributes its native thread slots, current upgrade tier, installed threads and their saved state. The normal Ars alteration table can remove/reinstall threads, and the native armor upgrade recipes upgrade the thread layer while keeping the original item. Slot layouts follow the donor's registered Ars provider, including additional tiers supplied by other mods.
+
+Only thread attributes and behavior are added. Ars armor's own base Mana, base regeneration, passive repair without a repairing thread, piglin neutrality and optional base tier-toughness bonus are not copied. The native repairing-thread effect can repair fused armor using its normal mana cost; other thread effects continue through native Ars events and tick callbacks. Equipped player armor receives thread ticking, matching the player armor use case on both platforms.
+
+Both inputs must be single items in the same armor slot. Receivers must be standard `ArmorItem` equipment without an existing Ars perk layer; already-fused armor cannot participate in either direction. Only the specific fused stack receives slots, not every item of that type. Disabling crafting preserves existing fusions. See [implementation and verification boundaries](docs/reverse-armor-fusion.md).
+
 ## Optional tier toughness
 
 Independent of fusion, enable `ars_armor_toughness.enabled`. Extra toughness **per piece** is:
@@ -119,6 +129,7 @@ enabled = true
 
 [armor_fusion]
 enabled = true
+reverse_enabled = true
 automatic_compatibility = true
 disable_manual_compatibility = false
 attribute_blacklist = ["minecraft:generic.armor", "minecraft:generic.armor_toughness"]

@@ -18,7 +18,7 @@ public final class ArmorFusion {
     }
 
     public static boolean ars(ItemStack stack) {
-        return stack.getItem() instanceof ArmorItem && !iron(stack) && FusionPlatform.tier(stack) > 0;
+        return stack.getItem() instanceof ArmorItem && !iron(stack) && !dev.arsfusion.platform.ReverseArmorPlatform.has(stack) && FusionPlatform.tier(stack) > 0;
     }
 
     public static EquipmentSlot slot(ItemStack stack) {
@@ -37,7 +37,7 @@ public final class ArmorFusion {
 
     private static boolean isDonorArmor(ItemStack donor) {
         // Ars is the receiving layer. Do not nest fused snapshots or fuse two Ars sets.
-        return donor.getItem() instanceof ArmorItem && !ars(donor) && !FusionPlatform.has(donor);
+        return donor.getItem() instanceof ArmorItem && !ars(donor) && !FusionPlatform.has(donor) && !dev.arsfusion.platform.ReverseArmorPlatform.has(donor);
     }
 
     public static boolean canFuse(ItemStack ars, ItemStack donor) {

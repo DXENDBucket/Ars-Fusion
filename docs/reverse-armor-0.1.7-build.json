@@ -1,0 +1,29 @@
+{
+  "version": "0.1.7",
+  "validation": {
+    "neoforge_main_and_gametest_source_compilation": "passed",
+    "forge_main_and_forgetest_source_compilation": "passed",
+    "forge_production_reobf_refmap_manifest_verifyRelease": "passed",
+    "runtime_game_client_server_or_gametest": "not run",
+    "release_class_resource_and_dependency_exclusion_checks": "passed",
+    "new_native_path_cases_per_platform": 2
+  },
+  "artifacts": [
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.1.7-mc1.21.1-neoforge.jar",
+      "sha256": "d087d06f665a48b4192a7e0d4c0418b16aa00a8f62bac476d14ab99dd1d29972"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.1.7-sources.jar",
+      "sha256": "f2a6f74c58816b0204d9498f7a58a74e92cd99b8bbda6f18d1d385d08325aa1d"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.1.7-mc1.20.1-forge.jar",
+      "sha256": "d41b52a546cc4ab235bbcdb27483b8f1143431d69fbc8a5fa2b1368b90273aea"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.1.7-sources.jar",
+      "sha256": "3f737d9a694f38ed343e4a13c4aad2b91ed751f124d517dfe95a5ef1623d1792"
+    }
+  ]
+}
