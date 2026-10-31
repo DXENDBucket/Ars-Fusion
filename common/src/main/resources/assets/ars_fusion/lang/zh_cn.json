@@ -3,5 +3,7 @@
   "item.ars_fusion.enchanters_tool": "巫师之%s",
   "tooltip.ars_fusion.shield_utility": "格挡后获得魔力再生和法术强化；消耗魔力缓慢自修。",
   "item.ars_fusion.fused_caster": "%s—%s融合施法器",
-  "tooltip.ars_fusion.thread_tier": "丝线槽等阶：%s"
+  "tooltip.ars_fusion.thread_tier": "丝线槽等阶：%s",
+  "item.ars_fusion.wilden_essence": "荒野精华",
+  "item.ars_fusion.nether_star_fragment": "下界之星碎片"
 }

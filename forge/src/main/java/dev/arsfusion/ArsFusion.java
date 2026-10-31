@@ -9,6 +9,7 @@ public final class ArsFusion {
     public ArsFusion() {
         var context=FMLJavaModLoadingContext.get();
         context.registerConfig(ModConfig.Type.SERVER,FusionConfig.SPEC);
+        dev.arsfusion.platform.HighArmorPlatform.register(context.getModEventBus());
         FusionPlatform.register(context.getModEventBus());
     }
 }

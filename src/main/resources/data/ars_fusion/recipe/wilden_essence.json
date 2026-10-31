@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ars_nouveau:wilden_tribute"
+    }
+  ],
+  "result": {
+    "id": "ars_fusion:wilden_essence",
+    "count": 4
+  }
+}

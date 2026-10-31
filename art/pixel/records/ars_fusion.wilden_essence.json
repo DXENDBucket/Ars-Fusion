@@ -1,0 +1,36 @@
+{
+  "algorithm": "pixel-assets-1",
+  "outputs": {
+    "sprite": "8066e9f74eb0db6293bcaac6c500cd3b4899fe61906fe78caac2152cf07474ac"
+  },
+  "pillow": "12.0.0",
+  "revision": "b0c0fb944dd03383",
+  "sources": {
+    "sprite": {
+      "file": "original.png",
+      "generator": "builtin-imagegen",
+      "prompt_used": "Create one Minecraft inventory item sprite called Wilden Essence: a small irregular condensed fragment of wild magic, deep violet body, lavender angular inner glow and two pale lilac rune-like pixel marks. It comes from breaking an Ars Nouveau Wilden Tribute into four portions. Keep it visually related to the purple magic relic family, but it must be an irregular fragment rather than a whole tablet or a bottle. Authentic vanilla Minecraft item pixel art, exactly 16x16 LOGICAL PIXELS with a one-pixel transparent margin, enlarged using crisp square blocks. Deliberate simple pixel clusters, a maximum of 12 colors, dark purple stepped outline, restrained upper-left highlights. Flat isolated inventory sprite, readable at 16 pixels. Genuinely transparent RGBA background. No text, no labels, no border frame, no cast shadows, no particles outside silhouette, no gradients, no antialiasing, no checkerboard.\n",
+      "sha256": "4a8311395b97eeec4b5f11cb5ae9853bcd3588e08ef48873b5ad5e515193387c"
+    }
+  },
+  "spec": {
+    "family": "Ars equipment upgrade materials",
+    "id": "wilden_essence",
+    "kind": "item",
+    "layout": "generated",
+    "namespace": "ars_fusion",
+    "processing": {
+      "alpha_threshold": 128,
+      "colors": 12,
+      "padding": 1,
+      "sampling": "box"
+    },
+    "schema_version": 1,
+    "size": 16,
+    "textures": {
+      "sprite": {
+        "subject": "Wilden Essence, a violet rune-bearing fragment of condensed wild magic"
+      }
+    }
+  }
+}

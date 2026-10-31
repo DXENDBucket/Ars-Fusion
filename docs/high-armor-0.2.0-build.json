@@ -1,0 +1,86 @@
+{
+  "version": "0.2.0",
+  "date": "2026-11-01",
+  "validation": {
+    "neoforge_main_and_gametest_source_compilation": "passed",
+    "forge_main_and_forgetest_source_compilation": "passed",
+    "forge_reobf_refmap_manifest_verifyRelease": "passed",
+    "recipe_model_texture_mixin_plugin_license_dependency_exclusion_audit": "passed",
+    "item_texture_size": "16x16",
+    "new_native_path_cases_per_platform": 2,
+    "runtime_client_server_gametest_or_mixin_application": "not run",
+    "pack_deployment": "not performed"
+  },
+  "hooks": [
+    {
+      "jar": "libs/ars.jar",
+      "checks": {
+        "render_perks_three_constant_once": true,
+        "render_perks_two_bone_calls": true,
+        "perks_spacing_present": true,
+        "perks_scale_present": true,
+        "render_slate_three_constants_twice": true,
+        "render_slate_three_bone_calls": true,
+        "slate_spacing_present": true,
+        "slate_scale_present": true,
+        "neo_perks_signature": true,
+        "add_perk_three_constant_once": true,
+        "jei_native_provider_list_call": true
+      },
+      "runtime_mixin_application": "not tested"
+    },
+    {
+      "jar": "forge/libs/ars-nouveau-forge1201.jar",
+      "checks": {
+        "render_perks_three_constant_once": true,
+        "render_perks_two_bone_calls": true,
+        "perks_spacing_present": true,
+        "perks_scale_present": true,
+        "forge_slate_model_variant_path": true,
+        "forge_perks_signature": true,
+        "add_perk_three_constant_once": true,
+        "jei_native_provider_list_call": true
+      },
+      "runtime_mixin_application": "not tested"
+    },
+    {
+      "jar": "C:/Users/57991/Desktop/.minecraft/versions/1.21.1-\u4e07\u6cd5\u5f52\u4e00/mods/[\u65b0\u751f\u9b54\u827a] ars_nouveau-1.21.1-5.13.3.jar",
+      "checks": {
+        "render_perks_three_constant_once": true,
+        "render_perks_two_bone_calls": true,
+        "perks_spacing_present": true,
+        "perks_scale_present": true,
+        "render_slate_three_constants_twice": true,
+        "render_slate_three_bone_calls": true,
+        "slate_spacing_present": true,
+        "slate_scale_present": true,
+        "neo_perks_signature": true,
+        "add_perk_three_constant_once": true,
+        "jei_native_provider_list_call": true
+      },
+      "runtime_mixin_application": "not tested"
+    }
+  ],
+  "logs": [
+    "build/high-armor-020-neo-final.log",
+    "forge/build/high-armor-020-forge-final.log"
+  ],
+  "artifacts": [
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.2.0-mc1.21.1-neoforge.jar",
+      "sha256": "ee6e30ee2a8d2a551c1f995be8a6e9fa4eb07a478f39a0c724e178a10b6ed2a5"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.2.0-sources.jar",
+      "sha256": "32b9926aa748dd85f76479c9a12f3f13118de743632ea820c534f9751f9f926d"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.2.0-mc1.20.1-forge.jar",
+      "sha256": "0f4e351544b10bc993aad927938c368cc5f3954ef6f3d7d41c5b63b2bd2cfb38"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.2.0-sources.jar",
+      "sha256": "2692c9b1d907b45fc38949d4b1304d65cf8c401b0912d48e65ae736a9b559741"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.arsfusion.mixin",
+  "plugin": "dev.arsfusion.mixin.FusionMixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "FusedArmorNameMixin",
@@ -17,13 +18,17 @@
     "FusedShieldBlockMixin",
     "FusedShieldRepairMixin",
     "OptionalGoetyCasterMixin",
-    "ReverseArmorSlotsMixin"
+    "ReverseArmorSlotsMixin",
+    "HighArmorAlterationMixin",
+    "HighSaturationMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "refmap": "ars_fusion.refmap.json",
   "client": [
-    "SwordManaHudMixin"
+    "SwordManaHudMixin",
+    "HighArmorRendererMixin",
+    "HighArmorJeiMixin"
   ]
 }

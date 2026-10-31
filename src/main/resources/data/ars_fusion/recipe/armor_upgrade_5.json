@@ -1,0 +1,13 @@
+{
+  "type": "ars_fusion:armor_upgrade",
+  "pedestalItems": [
+    {
+      "tag": "ars_fusion:nether_star_fragments"
+    },
+    {
+      "item": "minecraft:dragon_breath"
+    }
+  ],
+  "sourceCost": 10000,
+  "tier": 4
+}

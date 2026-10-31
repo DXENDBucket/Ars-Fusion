@@ -2,7 +2,7 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.8**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion, armor fusion and native-style armor upgrades through tier five. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.2.0**, common policy, compatibility code and integration checks.
 
 ## Staff attributes on Ars casting equipment
 
@@ -89,13 +89,37 @@ Both policies affect existing fusions without deleting their original data; re-e
 
 Both inputs must be single items in the same armor slot. Receivers must be standard `ArmorItem` equipment without an existing Ars perk layer; already-fused armor cannot participate in either direction. Only the specific fused stack receives slots, not every item of that type. Disabling crafting preserves existing fusions. See [implementation and verification boundaries](docs/reverse-armor-fusion.md).
 
+## Tier four and five armor upgrades
+
+The twelve native Sorcerer, Arcanist and Battlemage armor pieces can continue from tier three to tiers four and five in the **native Enchanting Apparatus**. These upgrades preserve item identity, wear, enchantments, threads and fusion data; forward and reverse fusions follow the same source armor progression. Other addons' armor, including Ars Elemental, does not gain these Fusion upgrade recipes.
+
+| Upgrade | Pedestal ingredients, one each | Source |
+| --- | --- | ---: |
+| Three to four | Wilden Essence + Greater Experience Gem | 7500 |
+| Four to five | Nether Star Fragment + Dragon Breath | 10000 |
+
+One Wilden Tribute crafts into **four Wilden Essence**. One Nether Star crafts into **four Nether Star Fragments**. The tier-five recipe accepts `ars_fusion:nether_star_fragments`; it contains only Fusion's quarter-star item by default. No automatic equivalence is assumed with other mods' differently sized fragments. Recipes use the data-driven `ars_fusion:armor_upgrade` serializer and remain in Ars' native upgrade recipe type/JEI category. Ingredient amounts and Source costs can be edited by datapacks.
+
+Each piece has four slots at tier four and five slots at tier five. Tier-four layouts use the first four entries below; tier five uses all five. Native tiers one, two and three remain unchanged.
+
+| Part | Sorcerer | Arcanist | Battlemage |
+| --- | --- | --- | --- |
+| Head | I / II / III / IV / V | I / I / III / III / IV | I / I / II / II / III |
+| Chest | II / II / III / IV / V | I / II / III / IV / V | I / I / III / IV / V |
+| Legs | II / II / III / IV / V | I / II / III / IV / V | I / I / III / III / IV |
+| Feet | I / II / III / IV / V | I / II / II / III / IV | I / I / II / II / III |
+
+Native numeric threads receive the actual IV/V slot value. Capacity continues at 10% per level, spell power at +2 per level, and toughness at +1 per level. The Whirlisprig saturation thread preserves its native I/II/III values and continues at +0.3 per additional level (IV: +1.3, V: +1.6 to its native saturation attribute). Mechanism unlocks such as gliding and undying keep their original behavior; no additional mechanic is invented for IV/V. Attribute caps and native per-thread stacking rules still apply.
+
+The alteration table accepts the actual slot count and fits all thread items and level labels into its existing display. No replacement block model is bundled. The native handbook's three-column diagram continues to show the original three tiers; the new tiers appear in JEI, equipment tooltips and the actual alteration table. Runtime visuals are still subject to manual verification for this release.
+
 ## Optional tier toughness
 
 Independent of fusion, enable `ars_armor_toughness.enabled`. Extra toughness **per piece** is:
 
 `actual displayed Ars armor tier × ars_armor_toughness.per_tier`
 
-Sorcerer, Arcanist and Battlemage are three parallel armor sets. Each independently starts at tier 1 and can be upgraded twice to tiers 2 and 3. At `per_tier = 1.0`, an unupgraded / once-upgraded / twice-upgraded piece gives +1 / +2 / +3 toughness. This is the armor upgrade tier, not the tier of an individual thread or the choice of armor set. This calculation has no tier-three cap. A higher-tier addon must provide valid native Ars armor/perk data for its extra tiers; Ars Fusion does not add tiers or change native thread-slot limits. Re-equip armor after changing these values at runtime.
+Sorcerer, Arcanist and Battlemage are three parallel armor sets. Each independently starts at tier 1, follows native upgrades to tiers 2/3, and can use Fusion's upgrades to tiers 4/5. At `per_tier = 1.0`, pieces receive +1/+2/+3/+4/+5 toughness. This is the armor upgrade tier, not an individual thread/slot level or the choice of armor set. The calculation itself has no tier-five cap; a future extension must still provide valid native perk-slot data. Re-equip armor after changing these values at runtime.
 
 ## Automatic armor compatibility
 

@@ -3,5 +3,7 @@
   "item.ars_fusion.enchanters_tool": "Enchanter's %s",
   "tooltip.ars_fusion.shield_utility": "Blocking grants Mana Regeneration and Spell Damage; repairs over time using mana.",
   "item.ars_fusion.fused_caster": "%s–%s Fused Caster",
-  "tooltip.ars_fusion.thread_tier": "Thread tier: %s"
+  "tooltip.ars_fusion.thread_tier": "Thread tier: %s",
+  "item.ars_fusion.wilden_essence": "Wilden Essence",
+  "item.ars_fusion.nether_star_fragment": "Nether Star Fragment"
 }

@@ -1,0 +1,13 @@
+{
+  "type": "ars_fusion:armor_upgrade",
+  "pedestalItems": [
+    {
+      "item": "ars_fusion:wilden_essence"
+    },
+    {
+      "item": "ars_nouveau:greater_experience_gem"
+    }
+  ],
+  "sourceCost": 7500,
+  "tier": 3
+}

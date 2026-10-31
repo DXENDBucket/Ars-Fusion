@@ -1,0 +1,36 @@
+{
+  "algorithm": "pixel-assets-1",
+  "outputs": {
+    "sprite": "08067033ce52b4c3bd159d7b30b18c7f5e33e26c59138f4eb5a232d1a1700c6b"
+  },
+  "pillow": "12.0.0",
+  "revision": "5af68067c749e93b",
+  "sources": {
+    "sprite": {
+      "file": "original.png",
+      "generator": "builtin-imagegen",
+      "prompt_used": "Create one Minecraft inventory item sprite called Nether Star Fragment: a broken irregular quarter-sized piece of a Nether Star, an ivory-white luminous crystalline shard with a pale warm golden center, restrained cool lavender edge shadows. Its silhouette has one short pointed ray and one clearly broken jagged edge; do not depict an intact star. Authentic vanilla Minecraft item pixel art, exactly 16x16 LOGICAL PIXELS with a one-pixel transparent margin, enlarged using crisp square blocks. Very simple deliberate readable pixel clusters and a maximum of 12 colors. Flat isolated inventory sprite. Genuinely transparent RGBA background. No text, no labels, no border frame, no bottle, no particles outside silhouette, no bloom, no gradients, no antialiasing, no checkerboard.\n",
+      "sha256": "c31021c58fc6bba3aef5ce5ace3cdb89679c578c462c1a75d333af694da1981e"
+    }
+  },
+  "spec": {
+    "family": "Ars equipment upgrade materials",
+    "id": "nether_star_fragment",
+    "kind": "item",
+    "layout": "generated",
+    "namespace": "ars_fusion",
+    "processing": {
+      "alpha_threshold": 128,
+      "colors": 12,
+      "padding": 1,
+      "sampling": "box"
+    },
+    "schema_version": 1,
+    "size": 16,
+    "textures": {
+      "sprite": {
+        "subject": "A broken quarter of a Nether Star, ivory and warm gold with cool edge shadows"
+      }
+    }
+  }
+}

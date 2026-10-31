@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "namespace": "ars_fusion",
+  "id": "nether_star_fragment",
+  "kind": "item",
+  "layout": "generated",
+  "size": 16,
+  "family": "Ars equipment upgrade materials",
+  "textures": {
+    "sprite": {
+      "subject": "A broken quarter of a Nether Star, ivory and warm gold with cool edge shadows"
+    }
+  },
+  "processing": {
+    "colors": 12,
+    "alpha_threshold": 128,
+    "padding": 1,
+    "sampling": "box"
+  }
+}

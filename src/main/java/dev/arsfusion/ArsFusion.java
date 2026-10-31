@@ -9,6 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 public final class ArsFusion {
     public ArsFusion(IEventBus bus,ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER,FusionConfig.SPEC);
+        dev.arsfusion.platform.HighArmorPlatform.register(bus);
         FusionPlatform.register(bus);
     }
 }
