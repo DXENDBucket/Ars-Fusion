@@ -21,6 +21,8 @@ public final class FusionConfig {
     public static final ModConfigSpec.BooleanValue BOW_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue ARMOR_FUSION_ENABLED;
     public static final ModConfigSpec.BooleanValue REVERSE_ARMOR_FUSION_ENABLED;
+    public static final ModConfigSpec.BooleanValue REVERSE_USES_ARS_DEFENSE;
+    public static final ModConfigSpec.BooleanValue REVERSE_TRANSFERS_ARS_MANA;
     public static final ModConfigSpec.BooleanValue AUTOMATIC_ARMOR_COMPATIBILITY;
     public static final ModConfigSpec.BooleanValue DISABLE_MANUAL_COMPATIBILITY;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ATTRIBUTE_BLACKLIST;
@@ -62,8 +64,16 @@ public final class FusionConfig {
                 "Keeps Ars appearance, threads, upgrades, durability and enchantments. Existing fused equipment retains its data when crafting is disabled.")
                 .define("enabled", true);
         REVERSE_ARMOR_FUSION_ENABLED = builder.comment("Allow reversed armor fusion: other armor on the left + same-slot Ars armor on the right.",
-                "Transfers only native thread slots, their upgrade tier and installed threads. Keeps the receiver item and its own abilities. Requires enabled.")
+                "Transfers native thread slots, their upgrade tier and installed threads. Defense and base mana transfer have independent switches. Keeps the receiver item and its own abilities. Requires enabled.")
                 .define("reverse_enabled", true);
+        REVERSE_USES_ARS_DEFENSE = builder.comment("Replace a reverse-fused receiver's armor and armor toughness modifiers with the Ars donor's material defense.",
+                "Includes the optional Ars tier-toughness bonus at the result's current upgrade tier. Thread modifiers are applied separately.",
+                "Keeps other attributes, enchantments and native abilities. Applies to existing fusions too; disable to retain the receiver's original defense. Re-equip after changing.")
+                .define("reverse_uses_ars_defense", true);
+        REVERSE_TRANSFERS_ARS_MANA = builder.comment("Also transfer the Ars donor's native maximum-mana and mana-regeneration attribute modifiers during reverse fusion.",
+                "Reads the actual Ars item at the result's current upgrade tier, without installed threads. Keeps the receiver's own mana modifiers; thread bonuses apply separately.",
+                "Applies to existing fusions too. Re-equip after changing.")
+                .define("reverse_transfers_ars_mana", true);
         AUTOMATIC_ARMOR_COMPATIBILITY = builder.comment("Allow other non-Ars ArmorItem armor as donors when no manual adapter matches. Enabled by default.",
                 "Only copies item Attribute Modifiers for the matching slot, filtered by attribute_blacklist.",
                 "Does not copy capabilities, special passives, enchantments or spell containers. Manual adapters such as Iron remain available when this is false.")
@@ -77,7 +87,7 @@ public final class FusionConfig {
                 "Unknown valid IDs are harmless; an empty list allows every donor modifier. Re-equip after changing at runtime.")
                 .defineListAllowEmpty("attribute_blacklist", () -> List.of("minecraft:generic.armor", "minecraft:generic.armor_toughness"), () -> "minecraft:generic.armor", FusionConfig::validAttribute);
         builder.pop().push("ars_armor_toughness");
-        TOUGHNESS_ENABLED = builder.comment("Add toughness to native Ars armor, with or without forward fusion. Reverse fusion does not copy this base armor bonus. Disabled by default.")
+        TOUGHNESS_ENABLED = builder.comment("Add toughness to Ars armor, including reverse fusions when reverse_uses_ars_defense is enabled. Disabled by default.")
                 .define("enabled", false);
         ARS_ARMOR_TOUGHNESS_PER_TIER = builder.comment("Extra toughness per piece = armor upgrade tier * this value.",
                 "All three native armor sets separately progress through tiers 1/2/3; does not use the armor style or an individual thread/slot level.",
@@ -113,6 +123,8 @@ public final class FusionConfig {
     public static boolean swordFusionEnabled() {return read(SWORD_FUSION_ENABLED);}
     public static boolean armorFusionEnabled() { return read(ARMOR_FUSION_ENABLED); }
     public static boolean reverseArmorFusionEnabled() { return read(REVERSE_ARMOR_FUSION_ENABLED); }
+    public static boolean reverseUsesArsDefense() { return read(REVERSE_USES_ARS_DEFENSE); }
+    public static boolean reverseTransfersArsMana() { return read(REVERSE_TRANSFERS_ARS_MANA); }
     public static boolean automaticArmorCompatibility() { return read(AUTOMATIC_ARMOR_COMPATIBILITY); }
     public static boolean automaticOnly() {
         return armorFusionEnabled() && automaticArmorCompatibility() && read(DISABLE_MANUAL_COMPATIBILITY);

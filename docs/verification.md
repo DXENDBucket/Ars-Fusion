@@ -77,3 +77,10 @@ Core tracked files remain unchanged at 6af5a278122da13766c3d0a1dfcc30d2a94a63e0.
 ## 0.1.7 reverse armor fusion
 
 NeoForge main + compileGameTestJava + jar + sourcesJar passed. Forge main + compileForgeTestJava + jar/reobfJar + sourcesJar + verifyRelease passed. Two new native-path regression cases per platform cover the anvil, native upgrade/storage codecs, isolation from native armor base stats and the alteration tile; these cases were **compiled only**, not executed. No client/server/GameTest process was launched for this batch. Renderer bytecode was checked to use PerkUtil and standard ArmorItem rendering; actual client visuals remain unverified. Full behavior and limits: [reverse armor](reverse-armor-fusion.md). Build fingerprints: [0.1.7](reverse-armor-0.1.7-build.json).
+
+## 0.1.8 reverse fusion defense and base mana (2026-11-01)
+
+- NeoForge main + `compileGameTestJava` + binary/source JARs passed. Forge main + `compileForgeTestJava` + binary/source JARs + reobfuscation + `verifyRelease` passed.
+- Added two native-event cases per platform, **compiled only**: defense replacement with optional live-tier toughness and a real toughness thread; independent max-mana/regen transfer with a real capacity thread and existing receiver mana/regen modifiers. They cover toggles on existing results, native upgrades, retained knockback resistance, and per-operation modifier accounting. The prior thread-only case explicitly disables base-mana transfer.
+- Final archives passed version, Java class level, MIT license, native dependency/test exclusion and config-key checks; Forge production refmap is present. Exact hashes and build logs: [0.1.8 build record](reverse-armor-0.1.8-build.json).
+- No game client, server or GameTest was started; no shared pack JAR was replaced. No four/five-tier equipment, extra thread slots or upgrade recipes were added. Runtime equipment behavior, visual tooltips and third-party armor passives remain unverified for this batch.

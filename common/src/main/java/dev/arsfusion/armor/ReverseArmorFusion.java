@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 
-/** The left item remains the armor; only the right item's native thread layer is transplanted. */
+/** The left item remains the armor; the donor supplies threads and optionally base defense. */
 public final class ReverseArmorFusion {
     private ReverseArmorFusion() { }
     public static boolean has(ItemStack stack) {
@@ -35,6 +35,18 @@ public final class ReverseArmorFusion {
         var result=receiver.copy();result.setCount(1);
         ReverseArmorPlatform.transfer(result,donor);
         return result;
+    }
+    public record Defense(double armor,double toughness) { }
+
+    /** Read the donor's material, but the live recipient tier after any native upgrades.
+     * Installed threads are applied separately, so their toughness is never copied twice. */
+    public static Defense defense(ItemStack stack) {
+        if(!FusionConfig.reverseUsesArsDefense())return null;
+        var donor=donor(stack);
+        if(donor.isEmpty())return null;
+        var armor=(ArmorItem)donor.getItem();
+        return new Defense(armor.getDefense(),armor.getToughness()
+                +FusionConfig.arsArmorToughnessPerTier()*FusionPlatform.tier(stack));
     }
     public static Component name(ItemStack stack,Component original) {
         var donor=donor(stack);

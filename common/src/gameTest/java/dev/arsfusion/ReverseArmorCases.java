@@ -23,8 +23,10 @@ public final class ReverseArmorCases {
                        UnaryOperator<ItemStack> upgrade,UnaryOperator<ItemStack> roundTrip,
                        ToDoubleFunction<ItemStack> mana) {
         boolean enabled=FusionConfig.ARMOR_FUSION_ENABLED.get(),reverse=FusionConfig.REVERSE_ARMOR_FUSION_ENABLED.get();
+        boolean manaTransfer=FusionConfig.REVERSE_TRANSFERS_ARS_MANA.get();
         try {
             FusionConfig.ARMOR_FUSION_ENABLED.set(true);FusionConfig.REVERSE_ARMOR_FUSION_ENABLED.set(true);
+            FusionConfig.REVERSE_TRANSFERS_ARS_MANA.set(false);
             var left=new ItemStack(Items.NETHERITE_CHESTPLATE);left.setDamageValue(17);
             var original=left.copy();var originalDonor=threaded.copy();
             var menu=new AnvilMenu(12,player.getInventory(),ContainerLevelAccess.NULL);player.experienceLevel=10;
@@ -54,7 +56,7 @@ public final class ReverseArmorCases {
             FusionConfig.REVERSE_ARMOR_FUSION_ENABLED.set(true);FusionConfig.ARMOR_FUSION_ENABLED.set(false);
             h.assertTrue(ReverseArmorFusion.fuse(left,threaded).isEmpty(),"Master armor toggle also controls reverse crafting");
             h.assertTrue(PerkUtil.getPerkHolder(new ItemStack(left.getItem()))==null,"Other stacks of the recipient item gain no slots");
-        } finally {FusionConfig.ARMOR_FUSION_ENABLED.set(enabled);FusionConfig.REVERSE_ARMOR_FUSION_ENABLED.set(reverse);}
+        } finally {FusionConfig.ARMOR_FUSION_ENABLED.set(enabled);FusionConfig.REVERSE_ARMOR_FUSION_ENABLED.set(reverse);FusionConfig.REVERSE_TRANSFERS_ARS_MANA.set(manaTransfer);}
         h.succeed();
     }
     static void alteration(GameTestHelper h,ServerPlayer player,ItemStack threaded) {

@@ -2,7 +2,7 @@
 
 Equipment fusion for Ars Nouveau, by EndXiom. MIT licensed.
 
-Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.7**, common policy, compatibility code and integration checks.
+Ars Fusion includes equipment casting fusion and the optional armor fusion moved out of Iron & Nouveau. Minecraft 1.21.1 / NeoForge and 1.20.1 / Forge share version **0.1.8**, common policy, compatibility code and integration checks.
 
 ## Staff attributes on Ars casting equipment
 
@@ -78,9 +78,14 @@ Turning fusion off prevents new fusions; existing equipment retains its data and
 
 Normal anvil: **other armor on the left + same-slot Ars armor on the right**, one XP level. Enabled by default through `armor_fusion.reverse_enabled`, under the master `armor_fusion.enabled` switch. This direction does not depend on the forward donor attribute blacklist or automatic-compatibility setting.
 
-The result stays the left armor, preserving its rendering, physical attributes, damage, enchantments, components and native abilities. The right item contributes its native thread slots, current upgrade tier, installed threads and their saved state. The normal Ars alteration table can remove/reinstall threads, and the native armor upgrade recipes upgrade the thread layer while keeping the original item. Slot layouts follow the donor's registered Ars provider, including additional tiers supplied by other mods.
+The result stays the left armor, preserving its rendering, damage, enchantments, components and native abilities. The right item contributes its native thread slots, current upgrade tier, installed threads and their saved state. The normal Ars alteration table can remove/reinstall threads, and the native armor upgrade recipes upgrade the thread layer while keeping the original item. Slot layouts follow the donor's registered Ars provider, including additional tiers supplied by other mods.
 
-Only thread attributes and behavior are added. Ars armor's own base Mana, base regeneration, passive repair without a repairing thread, piglin neutrality and optional base tier-toughness bonus are not copied. The native repairing-thread effect can repair fused armor using its normal mana cost; other thread effects continue through native Ars events and tick callbacks. Equipped player armor receives thread ticking, matching the player armor use case on both platforms.
+Two independent policies default to **true**:
+
+- `armor_fusion.reverse_uses_ars_defense`: replaces all receiver armor and armor-toughness item modifiers with the Ars donor's material defense. If optional tier toughness is enabled, it uses the result's **current** Ars upgrade tier. Installed thread modifiers are applied separately. Disable this policy to retain the receiver's original defense.
+- `armor_fusion.reverse_transfers_ars_mana`: adds the Ars donor's native maximum-mana and mana-regeneration modifiers. Reads the actual source item at the result's current tier with its installed threads removed from the probe, preserving native modifier amounts/operations. Receiver mana modifiers remain; installed thread bonuses are added exactly once. This does not copy Iron mana attributes separately or copy every donor attribute.
+
+Both policies affect existing fusions without deleting their original data; re-equip after changing configuration. Other receiver attributes, such as knockback resistance, remain. Ars passive repair without a repairing thread and piglin neutrality are not copied. The native repairing-thread effect can repair fused armor using its normal mana cost; other thread effects continue through native Ars events and tick callbacks. Equipped player armor receives thread ticking, matching the player armor use case on both platforms.
 
 Both inputs must be single items in the same armor slot. Receivers must be standard `ArmorItem` equipment without an existing Ars perk layer; already-fused armor cannot participate in either direction. Only the specific fused stack receives slots, not every item of that type. Disabling crafting preserves existing fusions. See [implementation and verification boundaries](docs/reverse-armor-fusion.md).
 
@@ -130,6 +135,8 @@ enabled = true
 [armor_fusion]
 enabled = true
 reverse_enabled = true
+reverse_uses_ars_defense = true
+reverse_transfers_ars_mana = true
 automatic_compatibility = true
 disable_manual_compatibility = false
 attribute_blacklist = ["minecraft:generic.armor", "minecraft:generic.armor_toughness"]

@@ -4,6 +4,7 @@ import com.hollingsworth.arsnouveau.api.registry.PerkRegistry;
 import com.hollingsworth.arsnouveau.api.util.PerkUtil;
 import com.hollingsworth.arsnouveau.api.perk.PerkSlot;
 import com.hollingsworth.arsnouveau.api.perk.ITickablePerk;
+import com.hollingsworth.arsnouveau.api.perk.PerkAttributes;
 import com.hollingsworth.arsnouveau.common.perk.RepairingPerk;
 import com.hollingsworth.arsnouveau.setup.registry.DataComponentRegistry;
 import dev.arsfusion.armor.ArmorFusion;
@@ -11,6 +12,9 @@ import dev.arsfusion.armor.ReverseArmorFusion;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -45,12 +49,36 @@ public final class ReverseArmorPlatform {
         var provider=donor.isEmpty()?null:PerkRegistry.getPerkProvider(donor.getItem());
         return provider==null?List.of():provider;
     }
+    private static ItemStack manaTemplate(ItemStack stack) {
+        var probe=ReverseArmorFusion.donor(stack);var live=PerkUtil.getPerkHolder(stack);
+        if(probe.isEmpty()||live==null)return ItemStack.EMPTY;
+        var original=PerkUtil.getPerkHolder(probe);if(original==null)return ItemStack.EMPTY;
+        probe.set(DataComponentRegistry.ARMOR_PERKS,original.setTier(live.getTier()).setPerks(List.of()));
+        return probe;
+    }
     public static void register(IEventBus bus) {
         TYPES.register(bus);
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.ItemAttributeModifierEvent event)->{
+        NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,(net.neoforged.neoforge.event.ItemAttributeModifierEvent event)->{
             var stack=event.getItemStack();if(!ReverseArmorFusion.has(stack))return;
             var holder=PerkUtil.getPerkHolder(stack);if(holder==null)return;
             var group=EquipmentSlotGroup.bySlot(ArmorFusion.slot(stack));
+            var defense=ReverseArmorFusion.defense(stack);
+            if(defense!=null) {
+                event.removeAllModifiersFor(Attributes.ARMOR);
+                event.removeAllModifiersFor(Attributes.ARMOR_TOUGHNESS);
+                String slot=ArmorFusion.slot(stack).getName();
+                event.addModifier(Attributes.ARMOR,new AttributeModifier(ResourceLocation.fromNamespaceAndPath("ars_fusion","reverse_armor/"+slot),defense.armor(),AttributeModifier.Operation.ADD_VALUE),group);
+                event.addModifier(Attributes.ARMOR_TOUGHNESS,new AttributeModifier(ResourceLocation.fromNamespaceAndPath("ars_fusion","reverse_toughness/"+slot),defense.toughness(),AttributeModifier.Operation.ADD_VALUE),group);
+            }
+            if(dev.arsfusion.config.FusionConfig.reverseTransfersArsMana()) {
+                var probe=manaTemplate(stack);
+                if(!probe.isEmpty())probe.forEachModifier(ArmorFusion.slot(stack),(attribute,modifier)->{
+                    if(attribute.value()!=PerkAttributes.MAX_MANA.get()&&attribute.value()!=PerkAttributes.MANA_REGEN_BONUS.get())return;
+                    var id=modifier.id();
+                    var owned=ResourceLocation.fromNamespaceAndPath("ars_fusion","reverse_mana/"+ArmorFusion.slot(stack).getName()+"/"+id.getNamespace()+"/"+id.getPath());
+                    event.addModifier(attribute,new AttributeModifier(owned,modifier.amount(),modifier.operation()),group);
+                });
+            }
             var added=ItemAttributeModifiers.EMPTY;
             for(var instance:holder.getPerkInstances(stack)) added=instance.getPerk()
                     .applyAttributeModifiers(added,stack,instance.getSlot().value(),group);

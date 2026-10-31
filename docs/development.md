@@ -2,6 +2,7 @@
 
 ## Layout
 
+- Reverse fusion policies (0.1.8): `ReverseArmorFusion.defense` reads source material defense and the live result tier. The platform attribute handlers replace receiver armor/toughness before applying actual thread modifiers. `manaTemplate` creates a thread-free source snapshot at the live result tier and reads only native Ars max-mana/regen modifiers, preserving operations under namespaced owned IDs. Both policies default on and are independent of creation toggles. `ReverseDefenseCases` / `ReverseManaCases` cover existing-result toggles, unrelated receiver modifiers, native upgrades and no double-counted thread bonuses. No additional equipment tiers, slots or recipes are introduced.
 - Reverse armor fusion (0.1.7): shared policy is `armor/ReverseArmorFusion`; platform `ReverseArmorPlatform` owns native thread data and slot lookup. See [reverse fusion](reverse-armor-fusion.md) for the native component/NBT split and verification boundaries. Never route reverse results through forward donor attribute transfer.
 
 - `common/src/main/java/dev/arsfusion/armor/ArmorFusion.java`: fusion policy, item identity, donor validation, naming and tier toughness.

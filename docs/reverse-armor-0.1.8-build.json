@@ -1,0 +1,40 @@
+{
+  "version": "0.1.8",
+  "date": "2026-11-01",
+  "scope": [
+    "reverse fusion Ars material defense replacement, default enabled",
+    "reverse fusion native Ars base maximum mana and regeneration transfer, independently default enabled"
+  ],
+  "additional_armor_tiers_slots_or_recipes": false,
+  "validation": {
+    "neoforge_main_and_gametest_source_compilation": "passed",
+    "forge_main_and_forgetest_source_compilation": "passed",
+    "forge_production_reobf_refmap_manifest_verifyRelease": "passed",
+    "release_class_resource_and_dependency_exclusion_checks": "passed",
+    "new_native_path_cases_per_platform": 2,
+    "runtime_game_client_server_or_gametest": "not run",
+    "pack_deployment": "not performed"
+  },
+  "logs": [
+    "build/reverse-018-neo-final.log",
+    "forge/build/reverse-018-forge-final.log"
+  ],
+  "artifacts": [
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.1.8-mc1.21.1-neoforge.jar",
+      "sha256": "3636f8423990d4b1d445d9201b1447cdf1bf7efef3573b6f23ec3fbb063f38e3"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\build\\libs\\ars-fusion-0.1.8-sources.jar",
+      "sha256": "66417b7bb5552eee7ca97e7b9aa88573c3bc86aa2b82ca257c2cf8f26c082adc"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.1.8-mc1.20.1-forge.jar",
+      "sha256": "e5e453d707ee3ab5a919c62fe08e84e5532df9cbc54a8ccbfa75e290cbdc6641"
+    },
+    {
+      "path": "C:\\Users\\57991\\Documents\\MinecraftDev\\Ars-Fusion\\forge\\build\\libs\\ars-fusion-0.1.8-sources.jar",
+      "sha256": "ab5a17b679be10b1ecba8da95b8f2254e7ec8a3c532a000efc46bd9cb364ca69"
+    }
+  ]
+}
